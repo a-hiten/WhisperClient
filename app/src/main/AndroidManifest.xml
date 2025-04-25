@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <!-- インターネット接続を許可するためにandroid.permission.INTERNET を追加 -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- インターネット接続を許可するためにandroid.permission.INTERNET を追加-->
-　　<uses-permission android:name="android.permission.INTERNET" />
-
-    <!-- HTTP通信(HTTPS通信ではない)を受け入れる場合、「android:usesCleartextTraffic="true"」をapplicationタグの中に追加 -->
     <application
-        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -16,16 +13,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.WhisperClient"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
         <activity
             android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:exported="false" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <!-- 表示したい画面を指定する -->
+         <activity
+             android:name=".LoginActivity"
+             android:exported="true">
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
+         </activity>
+
+
     </application>
 
 </manifest>

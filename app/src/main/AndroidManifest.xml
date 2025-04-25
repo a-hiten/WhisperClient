@@ -15,14 +15,24 @@
         android:theme="@style/Theme.WhisperClient"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity
-            android:name=".CreateUserActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" /> <!-- 表示したい画面を指定する -->
+
+        <!-- ユーザ作成画面 -->
+<!--        <activity-->
+<!--            android:name=".CreateUserActivity"-->
+<!--            android:exported="false" />-->
+
+        <!-- ログイン画面 -->
         <activity
             android:name=".LoginActivity"
+            android:exported="false" />
+        <!-- メイン画面 -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+
+        <!--　表示したい画面を指定する -->
+        <activity
+            android:name=".CreateUserActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

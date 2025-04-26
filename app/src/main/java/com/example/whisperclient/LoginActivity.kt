@@ -41,14 +41,37 @@ class LoginActivity : AppCompatActivity() {
             val userId = userIdEdit.text.toString()
             val password = passwordEdit.text.toString()
 
+            // パターン１　未入力チェック
             // isBlankで未入力チェックしてる。
+            // userIdとpasswordが両方空ならトーストを出す
             if (userId.isBlank() && password.isBlank()) {
+                // メッセージ内容：ユーザーIDとパスワードを入力してください
                 Toast.makeText(applicationContext, "ユーザーIDとパスワードを入力してください。", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
+            // パターン2 未入力チェック
+//            when {
+//                // userIdとpasswordが両方空ならトーストを出す
+//                userId.isBlank() && password.isBlank() -> {
+//                    Toast.makeText(applicationContext, "ユーザーIDとパスワードを入力してください。", Toast.LENGTH_SHORT).show()
+//                    return@setOnClickListener
+//                }
+//                // userIdが空ならトーストを出す
+//                userId.isBlank() -> {
+//                    Toast.makeText(applicationContext, "ユーザーIDを入力してください。", Toast.LENGTH_SHORT).show()
+//                    return@setOnClickListener
+//                }
+//                // passwordが空ならトーストを出す
+//                password.isBlank() -> {
+//                    Toast.makeText(applicationContext, "パスワードを入力してください。", Toast.LENGTH_SHORT).show()
+//                    return@setOnClickListener
+//                }
+//            }
+
+            //ここからログイン処理を書く
+
         }
-        // メッセージ内容：ユーザーIDとパスワードを入力してください
 
 
 

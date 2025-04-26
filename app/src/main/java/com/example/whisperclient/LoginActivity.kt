@@ -1,13 +1,20 @@
 package com.example.whisperclient
 
+import android.content.Context
 import android.os.Bundle
+import android.util.AttributeSet
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.RecyclerView
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,16 +28,27 @@ class LoginActivity : AppCompatActivity() {
         }
         // １．画面生成時（onCreate処理）
         // １－１．画面デザインで定義したオブジェクトを変数として宣言する。
-        val loginText = findViewById<TextView>(R.id.loginText)
-        val userIdEdit = findViewById<EditText>(R.id.userIdEdit)
-        val passwordEdit = findViewById<EditText>(R.id.passwordEdit)
-        val loginButton = findViewById<Button>(R.id.loginButton)
-        val createButton = findViewById<Button>(R.id.createButton)
+        val loginText = findViewById<TextView>(R.id.loginText)          // ログインテキスト
+        val userIdEdit = findViewById<EditText>(R.id.userIdEdit)        // メールアドレス入力
+        val passwordEdit = findViewById<EditText>(R.id.passwordEdit)    // パスワード入力
+        val loginButton = findViewById<Button>(R.id.loginButton)        // ログインボタン
+        val createButton = findViewById<Button>(R.id.createButton)      // ユーザ作成画面へ遷移するボタン
 
 
-//        １－２．loginButtonのクリックイベントリスナーを作成する
-//        １－２－１．入力項目が空白の時、エラーメッセージをトースト表示して処理を終了させる
-//        メッセージ内容：ユーザーIDとパスワードを入力してください
+        // １－２．loginButtonのクリックイベントリスナーを作成する
+        loginButton.setOnClickListener {
+            // １－２－１．入力項目が空白の時、エラーメッセージをトースト表示して処理を終了させる
+            val userId = userIdEdit.text.toString()
+            val password = passwordEdit.text.toString()
+
+            // isBlankで未入力チェックしてる。
+            if (userId.isBlank() && password.isBlank()) {
+                Toast.makeText(applicationContext, "ユーザーIDとパスワードを入力してください。", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+        }
+        // メッセージ内容：ユーザーIDとパスワードを入力してください
 
 
 
@@ -57,9 +75,10 @@ class LoginActivity : AppCompatActivity() {
 //        １－２－２－２－１．エラーメッセージをトースト表示する
 
 
-
 //        １－３．createButtonのクリックイベントリスナーを作成する
 //        １－３－１．ユーザ作成画面に遷移する
+
+
 
 
 

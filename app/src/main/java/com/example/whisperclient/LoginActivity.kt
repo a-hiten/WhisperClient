@@ -1,6 +1,7 @@
 package com.example.whisperclient
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -99,7 +100,12 @@ class LoginActivity : AppCompatActivity() {
 
 
 //        １－３．createButtonのクリックイベントリスナーを作成する
-//        １－３－１．ユーザ作成画面に遷移する
+        createButton.setOnClickListener {
+            // Intentでどの画面に行きたいかを指定する
+            val createBt = Intent(this, CreateUserActivity::class.java)
+            // １－３－１．ユーザ作成画面に遷移する
+            startActivity(createBt)
+        }
 
 
 

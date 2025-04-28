@@ -15,9 +15,11 @@
         android:theme="@style/Theme.WhisperClient"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <!-- タイムライン画面 -->
         <activity
             android:name=".TimelineActivity"
             android:exported="false" />
+        <!-- オーバーフローメニューの画面 -->
         <activity
             android:name=".OverflowMenuActivity"
             android:exported="false" /> <!-- ささやき画面 -->

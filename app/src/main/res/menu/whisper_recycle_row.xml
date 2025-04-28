@@ -2,10 +2,20 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Item" />
-    <item android:title="Item" />
-    <item android:title="Item" />
-    <item android:title="Item" />
-    <item android:title="Item" />
-    <item android:title="Item" />
+    <item
+        android:id="@+id/timeline"
+        android:title="TimeLine" />
+    <item
+        android:id="@+id/search"
+        android:title="Search" />
+    <item
+        android:id="@+id/whisper"
+        android:title="Whisper" />
+    <item
+        android:id="@+id/myprofile"
+        android:title="Profile" />
+    <item
+        android:id="@+id/profileedit"
+        android:title="UserEdit" />
+    <item android:title="Logout" />
 </menu>

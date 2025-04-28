@@ -16,6 +16,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,11 +57,14 @@ class LoginActivity : AppCompatActivity() {
             // userIdとpasswordが両方空ならトーストを出す
             if (userId.isBlank() && password.isBlank()) {
                 // メッセージ内容：ユーザーIDとパスワードを入力してください
-                Toast.makeText(applicationContext, "ユーザーIDとパスワードを入力してください。", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    applicationContext,
+                    "ユーザーIDとパスワードを入力してください。",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
-            }
 
-            // パターン2 未入力チェック
+                // パターン2 未入力チェック
 //            when {
 //                // userIdとpasswordが両方空ならトーストを出す
 //                userId.isBlank() && password.isBlank() -> {
@@ -70,35 +83,77 @@ class LoginActivity : AppCompatActivity() {
 //                }
 //            }
 
-            //ここからログイン処理を書く
+            }
+
+
+            // ここからログイン処理を書く
+            // １－２－２．ログイン認証APIをリクエストして入力ユーザのログイン認証を行う
+            // HTTP接続用インスタンス生成
+            val client = OkHttpClient()
+            // JSON形式でパラメータを送るようなデータ形式を設定
+            val mediaType : MediaType = "application/json; charset=utf-8".toMediaType()
+            // Bodyのデータ（APIに渡したいパラメータを設定）
+            val requestBodyJson = JSONObject().apply {
+                put("userId", userId)
+                put("password", password)
+            }
+            // BodyのデータをAPIに送る為にRequestBody形式に加工
+            val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
+            // Requestを作成
+            val request = Request.Builder()
+                .url("各自のサーバーアドレスに設定")  // URL設定
+                .post(requestBody)
+                .build()
+
+            // リクエスト送信（非同期処理）
+            client.newCall(request!!).enqueue(object : Callback {
+                // １－２－２－１．正常にレスポンスを受け取った時(コールバック処理)
+                override fun onResponse(call: Call, response: Response){
+                    val body = response.body?.string()
+                    println("レスポンスを受診しました: $body")
+
+                    if (response.isSuccessful && body != null) {
+                        // APIから取得したJSON文字列をJSONオブジェクトに変換
+                        val json = JSONObject(body)
+                        val success = json.optBoolean("success", false)
+
+                        if (success) {
+                            // ログイン成功
+                            val loginUserId = json.optString("userId", "")
+
+                            //１－２－３－１－３．タイムライン画面に遷移する
+                            runOnUiThread {
+                                // タイムライン画面に遷移する
+                                val intent = Intent(this@LoginActivity, TimelineActivity::class.java)
+                                intent.putExtra("loginUserId", loginUserId)
+                                startActivity(intent)
+                                //　１－２－３－１－４．自分の画面を閉じる
+                                finish()
+                            }
+                        } else {
+                            // ログイン失敗
+                            val errorMessage = json.optString("error", "ログインに失敗しました")
+                            runOnUiThread {
+                                Toast.makeText(applicationContext, errorMessage, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    } else {
+                        runOnUiThread {
+                            Toast.makeText(applicationContext, "サーバーエラーが発生しました", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                // １－２－２－２．リクエストが失敗した時(コールバック処理)
+                // リクエストが失敗した場合の処理を実装
+                override fun onFailure(call: Call, e: IOException) {
+                    runOnUiThread {
+                        // １－２－２－２－１．エラーメッセージをトースト表示する
+                        Toast.makeText(applicationContext, "リクエストが失敗しました: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            })
 
         }
-
-
-
-//        １－２－２．ログイン認証APIをリクエストして入力ユーザのログイン認証を行う
-
-
-
-//        １－２－２－１．正常にレスポンスを受け取った時(コールバック処理)
-//        １－２－２－１ー１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
-
-
-//        １－２－３－１－２．グローバル変数loginUserIdに作成したユーザIDを格納する
-
-
-//        １－２－３－１－３．タイムライン画面に遷移する
-
-
-
-//        １－２－３－１－４．自分の画面を閉じる
-
-
-
-//        １－２－２－２．リクエストが失敗した時(コールバック処理)
-//        １－２－２－２－１．エラーメッセージをトースト表示する
-
-
 //        １－３．createButtonのクリックイベントリスナーを作成する
         createButton.setOnClickListener {
             // Intentでどの画面に行きたいかを指定する
@@ -106,6 +161,8 @@ class LoginActivity : AppCompatActivity() {
             // １－３－１．ユーザ作成画面に遷移する
             startActivity(createBt)
         }
+
+
 
 
 

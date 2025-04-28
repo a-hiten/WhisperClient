@@ -15,6 +15,7 @@
         android:theme="@style/Theme.WhisperClient"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <!-- ささやき画面 -->
         <activity
             android:name=".WhisperActivity"
             android:exported="false" />
@@ -28,7 +29,8 @@
         <!-- メイン画面 -->
         <activity
             android:name=".MainActivity"
-            android:exported="false" /> <!-- 　表示したい画面を指定する -->
+            android:exported="false" />
+        <!-- 　表示したい画面を指定する -->
         <activity
             android:name=".LoginActivity"
             android:exported="true">

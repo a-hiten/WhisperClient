@@ -1,6 +1,8 @@
 package com.example.whisperclient
 
 import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -16,5 +18,41 @@ class CreateUserActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        // １．画面生成時（onCreate処理）
+        // １－１．画面デザインで定義したオブジェクトを変数として宣言する。
+
+        val userNameEdit = findViewById<EditText>(R.id.userNameEdit)
+        val userIdEdit = findViewById<EditText>(R.id.userIdEdit)
+        val passwordEdit = findViewById<EditText>(R.id.passwordEdit)
+        val rePasswordEdit = findViewById<EditText>(R.id.rePasswordEdit)
+        val createButton = findViewById<Button>(R.id.createButton)
+        val cancelButton = findViewById<Button>(R.id.cancelButton)
+
+
+
+
+
+
+//        １－２．createButtonのクリックイベントリスナーを作成する
+//        １－２－１．入力項目が空白の時、エラーメッセージをトースト表示して処理を終了させる
+
+
+
+//        １－２－２．パスワードと確認パスワードの内容が違う時、エラーメッセージをトースト表示して処理を終了させる
+
+
+
+//        １－２－３．ユーザ作成処理APIをリクエストしてユーザの追加を行う
+//        １－２－３－１．正常にレスポンスを受け取った時(コールバック処理)
+
+
+
+//        １－２－３－２．リクエストが失敗した時(コールバック処理)
+
+
+
+//        １－３．cancelButtonのクリックイベントリスナーを作成する
+//        １－３－１．自分の画面を閉じる
+
     }
 }

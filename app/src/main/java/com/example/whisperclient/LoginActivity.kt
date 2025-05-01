@@ -39,7 +39,6 @@ class LoginActivity : AppCompatActivity() {
         }
         // １．画面生成時（onCreate処理）
         // １－１．画面デザインで定義したオブジェクトを変数として宣言する。
-        val loginText = findViewById<TextView>(R.id.loginText)          // ログインテキスト
         val userIdEdit = findViewById<EditText>(R.id.userIdEdit)        // メールアドレス入力
         val passwordEdit = findViewById<EditText>(R.id.passwordEdit)    // パスワード入力
         val loginButton = findViewById<Button>(R.id.loginButton)        // ログインボタン
@@ -84,7 +83,6 @@ class LoginActivity : AppCompatActivity() {
 //            }
 
             }
-
 
             // １－２－２．ログイン認証APIをリクエストして入力ユーザのログイン認証を行う
             // HTTP接続用インスタンス生成
@@ -160,12 +158,5 @@ class LoginActivity : AppCompatActivity() {
             // １－３－１．ユーザ作成画面に遷移する
             startActivity(createBt)
         }
-
-
-
-
-
-
-
     }
 }

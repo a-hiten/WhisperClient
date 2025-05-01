@@ -86,7 +86,6 @@ class LoginActivity : AppCompatActivity() {
             }
 
 
-            // ここからログイン処理を書く
             // １－２－２．ログイン認証APIをリクエストして入力ユーザのログイン認証を行う
             // HTTP接続用インスタンス生成
             val client = OkHttpClient()
@@ -119,14 +118,15 @@ class LoginActivity : AppCompatActivity() {
 
                         if (success) {
                             // ログイン成功
+                            // １－２－３－１－２．グローバル変数loginUserIdに作成したユーザIDを格納する
                             val loginUserId = json.optString("userId", "")
 
-                            //１－２－３－１－３．タイムライン画面に遷移する
                             runOnUiThread {
-                                // タイムライン画面に遷移する
+                                //１－２－３－１－３．タイムライン画面に遷移する
                                 val intent = Intent(this@LoginActivity, TimelineActivity::class.java)
                                 intent.putExtra("loginUserId", loginUserId)
                                 startActivity(intent)
+
                                 //　１－２－３－１－４．自分の画面を閉じる
                                 finish()
                             }
@@ -144,7 +144,6 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
                 // １－２－２－２．リクエストが失敗した時(コールバック処理)
-                // リクエストが失敗した場合の処理を実装
                 override fun onFailure(call: Call, e: IOException) {
                     runOnUiThread {
                         // １－２－２－２－１．エラーメッセージをトースト表示する
@@ -154,13 +153,14 @@ class LoginActivity : AppCompatActivity() {
             })
 
         }
-//        １－３．createButtonのクリックイベントリスナーを作成する
+        // １－３．createButtonのクリックイベントリスナーを作成する
         createButton.setOnClickListener {
             // Intentでどの画面に行きたいかを指定する
             val createBt = Intent(this, CreateUserActivity::class.java)
             // １－３－１．ユーザ作成画面に遷移する
             startActivity(createBt)
         }
+
 
 
 

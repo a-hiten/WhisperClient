@@ -19,23 +19,17 @@ class OverflowMenuActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-
     }
-
-
-
-
-
-
-
+    //    ２．オーバーフローメニュー作成（アクティビティ名：OverflowMenuActivity）
+    //    ２－１．オプションメニュー生成時（onCreateOptionsMenu処理）
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        //    ２－１－１．インフレータにオーバーフローメニューのデザインを設定する
         menuInflater.inflate(R.menu.menu_item, menu)
+        //    ２－１－２．戻り値にtrueをセットする
         return true
     }
 
     //    ２－２．オプションメニューアイテム選択時（onOptionsItemSelected処理）
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
         when (item.itemId) {
             //    ２－２－１．受け取ったMenuItemがtimelineの時
@@ -67,7 +61,7 @@ class OverflowMenuActivity : AppCompatActivity() {
 
                 //    ２－２－４－１．インテントにログインユーザIDをセットする
                 val intent = Intent(this, UserInfoActivity::class.java)
-//                intent.putExtra("USER_ID", userIdEdit)
+    //                intent.putExtra("USER_ID", userIdEdit)
 
                 //    ２－２－４－２．ユーザ情報画面に遷移する
                 startActivity(intent)
@@ -75,10 +69,10 @@ class OverflowMenuActivity : AppCompatActivity() {
                 true
             }
             //    ２－２－５．受け取ったMenuItemがprofileeditの時
-            R.id.passwordEdit -> {
+            R.id.profileedit -> {
                 val intent = Intent(this, UserEditActivity::class.java)
                 //    ２－２－５－１．インテントにログインユーザIDをセットする
-//                intent.putExtra("USER_ID", userIdEdit)
+    //                intent.putExtra("USER_ID", userIdEdit)
                 //    ２－２－５－２．プロフィール編集画面に遷移する
                 startActivity(intent)
                 true
@@ -86,7 +80,7 @@ class OverflowMenuActivity : AppCompatActivity() {
             //    ２－２－６．受け取ったMenuItemがlogoutの時
             R.id.logout -> {
                 //    ２－２－６－１．グローバル変数loginUserIdに空文字を格納する
-//                loginUserId = ""
+    //                loginUserId = ""
 
                 val intent = Intent(this, LoginActivity::class.java)
                 //    ２－２－６－２．インテントに前画面情報をクリアするフラグを追加する
@@ -98,33 +92,13 @@ class OverflowMenuActivity : AppCompatActivity() {
 
                 //    ２－２－６－３．ログイン画面に遷移する
                 startActivity(intent)
-
                 //    ２－２－６－４． 現在のアクティビティを終了する
                 finish()
-
                 //    ２－２－６－５． 戻り値にtrueをセットする
                 true
             }
-
-
-
-
-//
-//    ２－２－７．それ以外を受け取った時
-//    ２－２－７－１．親クラスの処理を呼び出してデフォルトの動作を実行
-
-
-
-
-
-
-
-
-
+            //    ２－２－７．それ以外を受け取った時
+            //    ２－２－７－１．親クラスの処理を呼び出してデフォルトの動作を実行
             else -> super.onOptionsItemSelected(item)
         }
-
-
-
-
 }

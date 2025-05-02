@@ -17,5 +17,7 @@
     <item
         android:id="@+id/profileedit"
         android:title="UserEdit" />
-    <item android:title="Logout" />
+    <item
+        android:id="@+id/logout"
+        android:title="Logout" />
 </menu>

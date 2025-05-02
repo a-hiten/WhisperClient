@@ -83,6 +83,7 @@ class LoginActivity : AppCompatActivity() {
 //            }
 
             }
+            /*
 
             // １－２－２．ログイン認証APIをリクエストして入力ユーザのログイン認証を行う
             // HTTP接続用インスタンス生成
@@ -157,6 +158,9 @@ class LoginActivity : AppCompatActivity() {
             val createBt = Intent(this, CreateUserActivity::class.java)
             // １－３－１．ユーザ作成画面に遷移する
             startActivity(createBt)
+
+
+            */
         }
     }
 }

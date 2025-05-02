@@ -21,17 +21,16 @@ class CreateUserActivity : AppCompatActivity() {
         // １．画面生成時（onCreate処理）
         // １－１．画面デザインで定義したオブジェクトを変数として宣言する。
 
-        val userNameEdit = findViewById<EditText>(R.id.userNameEdit)
-        val userIdEdit = findViewById<EditText>(R.id.userIdEdit)
-        val passwordEdit = findViewById<EditText>(R.id.passwordEdit)
-        val rePasswordEdit = findViewById<EditText>(R.id.rePasswordEdit)
-        val createButton = findViewById<Button>(R.id.createButton)
-        val cancelButton = findViewById<Button>(R.id.cancelButton)
+//        val userNameEdit = findViewById<EditText>(R.id.userNameEdit)
+//        val userIdEdit = findViewById<EditText>(R.id.userIdEdit)
+//        val passwordEdit = findViewById<EditText>(R.id.passwordEdit)
+//        val rePasswordEdit = findViewById<EditText>(R.id.rePasswordEdit)
+//        val createButton = findViewById<Button>(R.id.createButton)
+//        val cancelButton = findViewById<Button>(R.id.cancelButton)
 
-
-
-
-
+//        createButton.setOnClickListener {
+//
+//        }
 
 //        １－２．createButtonのクリックイベントリスナーを作成する
 //        １－２－１．入力項目が空白の時、エラーメッセージをトースト表示して処理を終了させる

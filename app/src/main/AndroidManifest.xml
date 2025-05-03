@@ -4,7 +4,9 @@
     <!-- インターネット接続を許可するためにandroid.permission.INTERNET を追加 -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!--　全クラスから呼び出しが出来るようにandroid:name="MyApplication"を追加 -->
     <application
+        android:name="MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"

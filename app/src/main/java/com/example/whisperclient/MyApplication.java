@@ -7,6 +7,7 @@ public class MyApplication {
 }
 
 
+
 //１．Applicationクラスを継承する
 //
 //２．グローバル変数loginUserIdを文字列型で宣言して、空文字で初期化する

@@ -6,7 +6,7 @@ public class MyApplication {
 
 }
 
-
+a
 
 //１．Applicationクラスを継承する
 //

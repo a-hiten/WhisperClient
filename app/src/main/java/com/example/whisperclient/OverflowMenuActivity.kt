@@ -21,6 +21,10 @@ class OverflowMenuActivity : AppCompatActivity() {
             insets
         }
         // グローバル変数にインテントから受け取ったログインユーザIDを保存
+        /*
+        この画面が呼び出されたときに受け取ったユーザIDを、アプリ全体で使えるように保存している。
+        getStringExtra：前の画面から送られてきた文字列のデータを受け取る
+         */
         val userId = intent.getStringExtra("USER_ID") ?: ""
         MyApplication.getInstance().loginUserId = userId
     }
@@ -65,7 +69,12 @@ class OverflowMenuActivity : AppCompatActivity() {
 
                 //    ２－２－４－１．インテントにログインユーザIDをセットする
                 val intent = Intent(this, UserInfoActivity::class.java)
-//                    intent.putExtra("USER_ID", userIdEdit)
+
+                /*
+                loginUserIdをUser_Idという名前で次の名前に渡す準備をしてる
+                putExtra：インテントに追加情報を詰め込むためのもの
+                 */
+                intent.putExtra("USER_ID", MyApplication.getInstance().loginUserId)
 
                 //    ２－２－４－２．ユーザ情報画面に遷移する
                 startActivity(intent)
@@ -76,7 +85,8 @@ class OverflowMenuActivity : AppCompatActivity() {
             R.id.profileedit -> {
                 val intent = Intent(this, UserEditActivity::class.java)
                 //    ２－２－５－１．インテントにログインユーザIDをセットする
-    //                intent.putExtra("USER_ID", userIdEdit)
+                intent.putExtra("USER_ID",MyApplication.getInstance().loginUserId)
+
                 //    ２－２－５－２．プロフィール編集画面に遷移する
                 startActivity(intent)
                 true
@@ -84,7 +94,10 @@ class OverflowMenuActivity : AppCompatActivity() {
             //    ２－２－６．受け取ったMenuItemがlogoutの時
             R.id.logout -> {
                 //    ２－２－６－１．グローバル変数loginUserIdに空文字を格納する
-//                    loginUserId = ""
+                /*
+                ログイン処理を行った際に、ログインしているユーザIDを空にしてリセットしている
+                 */
+                MyApplication.getInstance().loginUserId = ""
 
                 val intent = Intent(this, LoginActivity::class.java)
                 //    ２－２－６－２．インテントに前画面情報をクリアするフラグを追加する

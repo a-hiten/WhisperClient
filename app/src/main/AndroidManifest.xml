@@ -4,9 +4,9 @@
     <!-- インターネット接続を許可するためにandroid.permission.INTERNET を追加 -->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!--　全クラスから呼び出しが出来るようにandroid:name="MyApplication"を追加 -->
+    <!--　全クラスから呼び出しが出来るようにandroid:name="com.example.whisperclient.MyApplication"を追加 -->
     <application
-        android:name="MyApplication"
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -37,7 +37,8 @@
             android:exported="false" /> <!-- オーバーフローメニューの画面 -->
         <activity
             android:name=".WhisperActivity"
-            android:exported="false" /> <!-- ユーザ作成画面 -->
+            android:exported="false" />
+        <!-- ユーザ作成画面 -->
         <activity
             android:name=".CreateUserActivity"
             android:exported="false" /> <!-- ログイン画面 -->

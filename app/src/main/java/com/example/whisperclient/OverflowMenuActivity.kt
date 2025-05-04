@@ -1,6 +1,5 @@
 package com.example.whisperclient
 
-import MyApplication
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -85,7 +84,7 @@ class OverflowMenuActivity : AppCompatActivity() {
             R.id.profileedit -> {
                 val intent = Intent(this, UserEditActivity::class.java)
                 //    ２－２－５－１．インテントにログインユーザIDをセットする
-                intent.putExtra("USER_ID",MyApplication.getInstance().loginUserId)
+                intent.putExtra("USER_ID", MyApplication.getInstance().loginUserId)
 
                 //    ２－２－５－２．プロフィール編集画面に遷移する
                 startActivity(intent)

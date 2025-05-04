@@ -1,5 +1,6 @@
 package com.example.whisperclient
 
+import MyApplication
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -10,10 +11,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class OverflowMenuActivity : AppCompatActivity() {
-
-    // ログインユーザIDを格納する変数
-    private lateinit var loginUserId: String
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -23,6 +20,9 @@ class OverflowMenuActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        // グローバル変数にインテントから受け取ったログインユーザIDを保存
+        val userId = intent.getStringExtra("USER_ID") ?: ""
+        MyApplication.getInstance().loginUserId = userId
     }
     //    ２．オーバーフローメニュー作成（アクティビティ名：OverflowMenuActivity）
     //    ２－１．オプションメニュー生成時（onCreateOptionsMenu処理）

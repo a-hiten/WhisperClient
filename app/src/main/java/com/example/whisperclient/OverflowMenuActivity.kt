@@ -10,6 +10,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class OverflowMenuActivity : AppCompatActivity() {
+
+    // ログインユーザIDを格納する変数
+    private lateinit var loginUserId: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -61,7 +65,7 @@ class OverflowMenuActivity : AppCompatActivity() {
 
                 //    ２－２－４－１．インテントにログインユーザIDをセットする
                 val intent = Intent(this, UserInfoActivity::class.java)
-    //                intent.putExtra("USER_ID", userIdEdit)
+//                    intent.putExtra("USER_ID", userIdEdit)
 
                 //    ２－２－４－２．ユーザ情報画面に遷移する
                 startActivity(intent)
@@ -80,7 +84,7 @@ class OverflowMenuActivity : AppCompatActivity() {
             //    ２－２－６．受け取ったMenuItemがlogoutの時
             R.id.logout -> {
                 //    ２－２－６－１．グローバル変数loginUserIdに空文字を格納する
-    //                loginUserId = ""
+//                    loginUserId = ""
 
                 val intent = Intent(this, LoginActivity::class.java)
                 //    ２－２－６－２．インテントに前画面情報をクリアするフラグを追加する

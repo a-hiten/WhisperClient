@@ -51,6 +51,16 @@ class CreateUserActivity : AppCompatActivity() {
                 ).show()
                 return@setOnClickListener
             }
+            // １－２－２．パスワードと確認パスワードの内容が違う時、エラーメッセージをトースト表示して処理を終了させる
+            if (password != repassword) {
+                // メッセージ内容：「パスワードが一致しません」
+                Toast.makeText(
+                    applicationContext,
+                    "パスワードが一致しません。",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
 
 //            when {
 //                // userIdとpasswordが両方空ならトーストを出す
@@ -76,7 +86,6 @@ class CreateUserActivity : AppCompatActivity() {
 
 
 
-//        １－２－２．パスワードと確認パスワードの内容が違う時、エラーメッセージをトースト表示して処理を終了させる
 
 
 

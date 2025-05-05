@@ -3,6 +3,7 @@ package com.example.whisperclient
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -21,19 +22,57 @@ class CreateUserActivity : AppCompatActivity() {
         // １．画面生成時（onCreate処理）
         // １－１．画面デザインで定義したオブジェクトを変数として宣言する。
 
-//        val userNameEdit = findViewById<EditText>(R.id.userNameEdit)
-//        val userIdEdit = findViewById<EditText>(R.id.userIdEdit)
-//        val passwordEdit = findViewById<EditText>(R.id.passwordEdit)
-//        val rePasswordEdit = findViewById<EditText>(R.id.rePasswordEdit)
-//        val createButton = findViewById<Button>(R.id.createButton)
-//        val cancelButton = findViewById<Button>(R.id.cancelButton)
+        val userNameEdit = findViewById<EditText>(R.id.userNameEdit)
+        val userIdEdit = findViewById<EditText>(R.id.userIdEdit)
+        val passwordEdit = findViewById<EditText>(R.id.passwordEdit)
+        val rePasswordEdit = findViewById<EditText>(R.id.rePasswordEdit)
+        val createButton = findViewById<Button>(R.id.createButton)
+        val cancelButton = findViewById<Button>(R.id.cancelButton)
 
-//        createButton.setOnClickListener {
-//
-//        }
 
-//        １－２．createButtonのクリックイベントリスナーを作成する
-//        １－２－１．入力項目が空白の時、エラーメッセージをトースト表示して処理を終了させる
+        // １－２．createButtonのクリックイベントリスナーを作成する
+        createButton.setOnClickListener {
+            // １－２－１．入力項目が空白の時、エラーメッセージをトースト表示して処理を終了させる
+            val userName = userNameEdit.text.toString()
+            val userId = userIdEdit.text.toString()
+            val password = passwordEdit.text.toString()
+            val repassword = rePasswordEdit.text.toString()
+
+
+            // パターン１　未入力チェック
+            // isBlankで未入力チェックしてる。
+            // 全ての項目が空の場合
+            if (userName.isBlank() && userId.isBlank() && password.isBlank() && repassword.isBlank()) {
+                // メッセージ内容：全ての項目を入力してください。
+                Toast.makeText(
+                    applicationContext,
+                    "全ての項目を入力してください。",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+//            when {
+//                // userIdとpasswordが両方空ならトーストを出す
+//                userId.isBlank() && password.isBlank() -> {
+//                    Toast.makeText(applicationContext, "ユーザーIDとパスワードを入力してください。", Toast.LENGTH_SHORT).show()
+//                    return@setOnClickListener
+//                }
+//                // userIdが空ならトーストを出す
+//                userId.isBlank() -> {
+//                    Toast.makeText(applicationContext, "ユーザーIDを入力してください。", Toast.LENGTH_SHORT).show()
+//                    return@setOnClickListener
+//                }
+//                // passwordが空ならトーストを出す
+//                password.isBlank() -> {
+//                    Toast.makeText(applicationContext, "パスワードを入力してください。", Toast.LENGTH_SHORT).show()
+//                    return@setOnClickListener
+//                }
+
+
+        }
+
+
 
 
 

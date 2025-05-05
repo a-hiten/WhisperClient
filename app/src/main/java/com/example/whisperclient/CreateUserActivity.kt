@@ -85,10 +85,6 @@ class CreateUserActivity : AppCompatActivity() {
 
 
 
-
-
-
-
 //        １－２－３．ユーザ作成処理APIをリクエストしてユーザの追加を行う
 //        １－２－３－１．正常にレスポンスを受け取った時(コールバック処理)
 
@@ -97,9 +93,11 @@ class CreateUserActivity : AppCompatActivity() {
 //        １－２－３－２．リクエストが失敗した時(コールバック処理)
 
 
-
-//        １－３．cancelButtonのクリックイベントリスナーを作成する
-//        １－３－１．自分の画面を閉じる
+        // １－３．cancelButtonのクリックイベントリスナーを作成する
+        cancelButton.setOnClickListener {
+            // １－３－１．自分の画面を閉じる
+            finish()
+        }
 
     }
 }

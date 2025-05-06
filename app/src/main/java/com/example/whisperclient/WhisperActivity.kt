@@ -2,6 +2,7 @@ package com.example.whisperclient
 
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -77,4 +78,11 @@ class WhisperActivity : AppCompatActivity() {
         //    ２－１－２．戻り値にtrueをセットする
         return true
     }
+
+    // オーバーフローメニューを選んだ時に共通処理を呼び出す。
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return OverflowMenuActivity.handleMenuItemSelected(this,item) || super.onOptionsItemSelected(item)
+    }
+
+
 }

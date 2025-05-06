@@ -2,6 +2,7 @@ package com.example.whisperclient
 
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -24,5 +25,10 @@ class UserEditActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_item, menu)
         //    ２－１－２．戻り値にtrueをセットする
         return true
+    }
+
+    // オーバーフローメニューを選んだ時に共通処理を呼び出す。
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return OverflowMenuActivity.handleMenuItemSelected(this,item) || super.onOptionsItemSelected(item)
     }
 }

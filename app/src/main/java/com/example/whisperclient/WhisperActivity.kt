@@ -24,14 +24,11 @@ class WhisperActivity : AppCompatActivity() {
             insets
         }
         // ２－１．画面デザインで定義したオブジェクトを変数として宣言する。
-        val whisperText = findViewById<TextView>(R.id.whisperText)      // Whisperのテキスト
         val whisperEdit = findViewById<EditText>(R.id.whisperEdit)      // 入力できるとこ
         val whisperButton = findViewById<Button>(R.id.whisperButton)    // Whisperボタン
         val cancelButton = findViewById<Button>(R.id.cancelButton)      // キャンセルボタン
 
 //        ２－２．グローバル変数のログインユーザーIDを取得。
-
-
 
         // ２－３．whisperButtonのクリックイベントリスナーを作成する
         whisperButton.setOnClickListener {
@@ -61,9 +58,13 @@ class WhisperActivity : AppCompatActivity() {
 //        ２－３－２ー２．リクエストが失敗した時(コールバック処理)
 
 //        ２－３－２ー２－１．エラーメッセージをトースト表示する
-//
-//        ２－４．cancelButtonのクリックイベントリスナーを作成する
-//        ２－４－１．自分の画面を閉じる
+
+
+        // ２－４．cancelButtonのクリックイベントリスナーを作成する
+        cancelButton.setOnClickListener {
+            // ２－４－１．自分の画面を閉じる
+            finish()
+        }
 
 
     }

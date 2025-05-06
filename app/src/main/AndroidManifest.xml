@@ -29,12 +29,14 @@
         <activity
             android:name=".SearchActivity"
             android:exported="false" />
-        <activity
-            android:name=".OverflowMenuActivity"
-            android:exported="false" /> <!-- タイムライン画面 -->
+<!--        <activity-->
+<!--            android:name=".OverflowMenuActivity"-->
+<!--            android:exported="false" /> -->
+        <!-- タイムライン画面 -->
         <activity
             android:name=".TimelineActivity"
-            android:exported="false" /> <!-- オーバーフローメニューの画面 -->
+            android:exported="false" />
+        <!-- オーバーフローメニューの画面 -->
         <activity
             android:name=".WhisperActivity"
             android:exported="false" />
@@ -51,7 +53,7 @@
             android:name=".MainActivity"
             android:exported="false" /> <!-- 　表示したい画面を指定する -->
         <activity
-            android:name=".CreateUserActivity"
+            android:name=".OverflowMenuActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

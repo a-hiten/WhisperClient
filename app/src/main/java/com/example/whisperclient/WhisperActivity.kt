@@ -1,6 +1,7 @@
 package com.example.whisperclient
 
 import android.os.Bundle
+import android.view.Menu
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -23,6 +24,8 @@ class WhisperActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+
         // ２－１．画面デザインで定義したオブジェクトを変数として宣言する。
         val whisperEdit = findViewById<EditText>(R.id.whisperEdit)      // 入力できるとこ
         val whisperButton = findViewById<Button>(R.id.whisperButton)    // Whisperボタン
@@ -65,7 +68,13 @@ class WhisperActivity : AppCompatActivity() {
             // ２－４－１．自分の画面を閉じる
             finish()
         }
+    }
 
-
+    // オーバーフローメニューを表示するやつ
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        //    ２－１－１．インフレータにオーバーフローメニューのデザインを設定する
+        menuInflater.inflate(R.menu.menu_item, menu)
+        //    ２－１－２．戻り値にtrueをセットする
+        return true
     }
 }

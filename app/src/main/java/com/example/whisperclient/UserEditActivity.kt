@@ -1,6 +1,7 @@
 package com.example.whisperclient
 
 import android.os.Bundle
+import android.view.Menu
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -16,5 +17,12 @@ class UserEditActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+    // オーバーフローメニューを表示するやつ
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        //    ２－１－１．インフレータにオーバーフローメニューのデザインを設定する
+        menuInflater.inflate(R.menu.menu_item, menu)
+        //    ２－１－２．戻り値にtrueをセットする
+        return true
     }
 }

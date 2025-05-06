@@ -39,7 +39,7 @@ class CreateUserActivity : AppCompatActivity() {
             val repassword = rePasswordEdit.text.toString()
 
 
-            // パターン１　未入力チェック
+
             // isBlankで未入力チェックしてる。
             // 全ての項目が空の場合
             if (userName.isBlank() && userId.isBlank() && password.isBlank() && repassword.isBlank()) {
@@ -51,6 +51,18 @@ class CreateUserActivity : AppCompatActivity() {
                 ).show()
                 return@setOnClickListener
             }
+
+            // 入力されていない項目がある場合　＊仕様書には書いていない処理です。
+            if (userName.isBlank() || userId.isBlank() || password.isBlank() || repassword.isBlank()) {
+                // メッセージ内容：入力されていない項目があります。
+                Toast.makeText(
+                    applicationContext,
+                    "入力されていない項目があります。",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
             // １－２－２．パスワードと確認パスワードの内容が違う時、エラーメッセージをトースト表示して処理を終了させる
             if (password != repassword) {
                 // メッセージ内容：「パスワードが一致しません」
@@ -61,25 +73,6 @@ class CreateUserActivity : AppCompatActivity() {
                 ).show()
                 return@setOnClickListener
             }
-
-//            when {
-//                // userIdとpasswordが両方空ならトーストを出す
-//                userId.isBlank() && password.isBlank() -> {
-//                    Toast.makeText(applicationContext, "ユーザーIDとパスワードを入力してください。", Toast.LENGTH_SHORT).show()
-//                    return@setOnClickListener
-//                }
-//                // userIdが空ならトーストを出す
-//                userId.isBlank() -> {
-//                    Toast.makeText(applicationContext, "ユーザーIDを入力してください。", Toast.LENGTH_SHORT).show()
-//                    return@setOnClickListener
-//                }
-//                // passwordが空ならトーストを出す
-//                password.isBlank() -> {
-//                    Toast.makeText(applicationContext, "パスワードを入力してください。", Toast.LENGTH_SHORT).show()
-//                    return@setOnClickListener
-//                }
-
-
         }
 
 

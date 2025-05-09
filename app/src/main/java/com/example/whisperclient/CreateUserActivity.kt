@@ -1,5 +1,6 @@
 package com.example.whisperclient
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -103,6 +104,8 @@ class CreateUserActivity : AppCompatActivity() {
                     .build()
 
 
+
+                // １－２－３－１．正常にレスポンスを受け取った時(コールバック処理)
                 // リクエスト送信（非同期処理）
                 client.newCall(request!!).enqueue(object : Callback {
                     // リクエストが成功した場合の処理を実装
@@ -111,16 +114,37 @@ class CreateUserActivity : AppCompatActivity() {
                         println("レスポンスを受信しました: $body")
                         // postメソッドを使うことでUIを操作することができる。(runOnUiThreadメソッドでも可)
 //                    textView.post { textView.text = body }
+
                     }
 
+//                    val cBt = Intent(this, TimelineActivity::class.java)
+//                    // １－３．createButtonのクリックイベントリスナーを作成する
+//                    createButton.setOnClickListener {
+//                        // Intentでどの画面に行きたいかを指定する
+//                        val createBt = Intent(this, TimelineActivity::class.java)
+//                        // １－３－１．ユーザ作成画面に遷移する
+//                        startActivity(createBt)
+//                    }
+
+
+                    // １－２－３－２．リクエストが失敗した時(コールバック処理)
                     // リクエストが失敗した場合の処理を実装
                     override fun onFailure(call: Call, e: IOException) {
-                        // runOnUiThreadメソッドを使うことでUIを操作することができる。(postメソッドでも可)
-//                    runOnUiThread {
-//                        textView.text = "リクエストが失敗しました: ${e.message}"
-//                    }
+                        // メッセージ内容：全ての項目を入力してください。
+                        Toast.makeText(
+                            applicationContext,
+                            "リクエストが失敗しました。。",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
+
                 })
+
+                //        １－２－３．ユーザ作成処理APIをリクエストしてユーザの追加を行う
+
+
+
+
             }
 
         }
@@ -128,12 +152,7 @@ class CreateUserActivity : AppCompatActivity() {
 
 
 
-//        １－２－３．ユーザ作成処理APIをリクエストしてユーザの追加を行う
-//        １－２－３－１．正常にレスポンスを受け取った時(コールバック処理)
 
-
-
-//        １－２－３－２．リクエストが失敗した時(コールバック処理)
 
 
         // １－３．cancelButtonのクリックイベントリスナーを作成する

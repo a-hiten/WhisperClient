@@ -7,4 +7,25 @@
     android:layout_height="match_parent"
     tools:context=".TimelineActivity">
 
+    <TextView
+        android:id="@+id/timelineText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="171dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="182dp"
+        android:text="TimeLine"
+        android:textSize="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/timelineRecycle"
+        android:layout_width="419dp"
+        android:layout_height="575dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timelineText" />
 </androidx.constraintlayout.widget.ConstraintLayout>

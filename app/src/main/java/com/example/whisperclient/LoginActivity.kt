@@ -44,7 +44,6 @@ class LoginActivity : AppCompatActivity() {
         val loginButton = findViewById<Button>(R.id.loginButton)        // ログインボタン
         val createButton = findViewById<Button>(R.id.createButton)      // ユーザ作成画面へ遷移するボタン
 
-
         // １－２．loginButtonのクリックイベントリスナーを作成する
         loginButton.setOnClickListener {
             // １－２－１．入力項目が空白の時、エラーメッセージをトースト表示して処理を終了させる
@@ -81,13 +80,14 @@ class LoginActivity : AppCompatActivity() {
 //                    return@setOnClickListener
 //                }
 //            }
-                /*
+
+
 
                 // １－２－２．ログイン認証APIをリクエストして入力ユーザのログイン認証を行う
                 // HTTP接続用インスタンス生成
                 val client = OkHttpClient()
                 // JSON形式でパラメータを送るようなデータ形式を設定
-                val mediaType : MediaType = "application/json; charset=utf-8".toMediaType()
+                val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
                 // Bodyのデータ（APIに渡したいパラメータを設定）
                 val requestBodyJson = JSONObject().apply {
                     put("userId", userId)
@@ -104,7 +104,7 @@ class LoginActivity : AppCompatActivity() {
                 // リクエスト送信（非同期処理）
                 client.newCall(request!!).enqueue(object : Callback {
                     // １－２－２－１．正常にレスポンスを受け取った時(コールバック処理)
-                    override fun onResponse(call: Call, response: Response){
+                    override fun onResponse(call: Call, response: Response) {
                         val body = response.body?.string()
                         println("レスポンスを受診しました: $body")
 
@@ -120,7 +120,8 @@ class LoginActivity : AppCompatActivity() {
 
                                 runOnUiThread {
                                     //１－２－３－１－３．タイムライン画面に遷移する
-                                    val intent = Intent(this@LoginActivity, TimelineActivity::class.java)
+                                    val intent =
+                                        Intent(this@LoginActivity, TimelineActivity::class.java)
                                     intent.putExtra("loginUserId", loginUserId)
                                     startActivity(intent)
 
@@ -131,31 +132,38 @@ class LoginActivity : AppCompatActivity() {
                                 // ログイン失敗
                                 val errorMessage = json.optString("error", "ログインに失敗しました")
                                 runOnUiThread {
-                                    Toast.makeText(applicationContext, errorMessage, Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        applicationContext,
+                                        errorMessage,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         } else {
                             runOnUiThread {
-                                Toast.makeText(applicationContext, "サーバーエラーが発生しました", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    applicationContext,
+                                    "サーバーエラーが発生しました",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                     }
+
                     // １－２－２－２．リクエストが失敗した時(コールバック処理)
                     override fun onFailure(call: Call, e: IOException) {
                         runOnUiThread {
                             // １－２－２－２－１．エラーメッセージをトースト表示する
-                            Toast.makeText(applicationContext, "リクエストが失敗しました: ${e.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                applicationContext,
+                                "リクエストが失敗しました: ${e.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 })
 
             }
-
-                */
-            }
-
-
-
         }
         // １－３．createButtonのクリックイベントリスナーを作成する
         createButton.setOnClickListener {

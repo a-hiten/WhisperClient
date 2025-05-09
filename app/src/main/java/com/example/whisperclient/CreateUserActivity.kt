@@ -8,6 +8,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 
 class CreateUserActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,6 +83,46 @@ class CreateUserActivity : AppCompatActivity() {
                 ).show()
                 return@setOnClickListener
             }
+
+
+            createButton.setOnClickListener {
+                // HTTP接続用インスタンス生成
+                val client = OkHttpClient()
+                // JSON形式でパラメータを送るようデータ形式を設定
+                val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
+                // Bodyのデータ(APIに渡したいパラメータを設定)
+                val requestBodyJson = JSONObject().apply {
+//                    put("productNo", editText.text)
+                }
+                // BodyのデータをAPIに送るためにRequestBody形式に加工
+                val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
+                // Requestを作成(先ほど設定したデータ形式とパラメータ情報をもとにリクエストデータを作成)
+                val request = Request.Builder()
+                    .url("http://10.0.2.2/SampleProject/sample.php") // URL設定
+                    .post(requestBody) // リクエストするパラメータ設定
+                    .build()
+
+
+                // リクエスト送信（非同期処理）
+                client.newCall(request!!).enqueue(object : Callback {
+                    // リクエストが成功した場合の処理を実装
+                    override fun onResponse(call: Call, response: Response) {
+                        val body = response.body?.string()
+                        println("レスポンスを受信しました: $body")
+                        // postメソッドを使うことでUIを操作することができる。(runOnUiThreadメソッドでも可)
+//                    textView.post { textView.text = body }
+                    }
+
+                    // リクエストが失敗した場合の処理を実装
+                    override fun onFailure(call: Call, e: IOException) {
+                        // runOnUiThreadメソッドを使うことでUIを操作することができる。(postメソッドでも可)
+//                    runOnUiThread {
+//                        textView.text = "リクエストが失敗しました: ${e.message}"
+//                    }
+                    }
+                })
+            }
+
         }
 
 

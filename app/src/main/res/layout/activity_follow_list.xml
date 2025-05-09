@@ -7,4 +7,30 @@
     android:layout_height="match_parent"
     tools:context=".FollowListActivity">
 
+    <TextView
+        android:id="@+id/followListText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="171dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="185dp"
+        android:text="Follow List"
+        android:textSize="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.413"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/followRecycle"
+        android:layout_width="412dp"
+        android:layout_height="616dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/followListText" />
 </androidx.constraintlayout.widget.ConstraintLayout>

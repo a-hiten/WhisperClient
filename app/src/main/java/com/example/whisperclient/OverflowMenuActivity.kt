@@ -131,17 +131,7 @@ class OverflowMenuActivity : AppCompatActivity() {
                 //    ２－２－７－１．親クラスの処理を呼び出してデフォルトの動作を実行
                 else -> activity.onOptionsItemSelected(item)
             }
-
-//                //    ２－２－５．受け取ったMenuItemがprofileeditの時
-//                R.id.profileedit -> {
-//                    val intent = Intent(activity, UserEditActivity::class.java)
-//                    //    ２－２－５－１．インテントにログインユーザIDをセットする
-//                    activity.startActivity(intent)
-//                    true
-//                }
-//                else -> false
-
-            }
         }
-
     }
+
+}

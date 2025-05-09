@@ -101,8 +101,7 @@ class OverflowMenuActivity : AppCompatActivity() {
                     intent.putExtra("USER_ID", MyApplication.getInstance().loginUserId)
                     //    ２－２－５－２．プロフィール編集画面に遷移する
                     activity.startActivity(intent)
-                    //    ２－２－５－３．戻り値にtrueをセットする 　
-                    //    ＊仕様書には書いてない部分だけど一応書いておく
+
                     true
                 }
                 //    ２－２－６．受け取ったMenuItemがlogoutの時

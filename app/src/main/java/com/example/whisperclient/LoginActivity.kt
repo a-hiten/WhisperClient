@@ -61,6 +61,7 @@ class LoginActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
                 return@setOnClickListener
+            }
 
                 // パターン2 未入力チェック
 //            when {
@@ -97,7 +98,7 @@ class LoginActivity : AppCompatActivity() {
                 val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
                 // Requestを作成
                 val request = Request.Builder()
-                    .url("各自のサーバーアドレスに設定")  // URL設定
+                    .url("http://10.0.2.2/TestAPI/test_php/loginAuth.php")  // URL設定
                     .post(requestBody)
                     .build()
 
@@ -111,9 +112,9 @@ class LoginActivity : AppCompatActivity() {
                         if (response.isSuccessful && body != null) {
                             // APIから取得したJSON文字列をJSONオブジェクトに変換
                             val json = JSONObject(body)
-                            val success = json.optBoolean("success", false)
+                            val status = json.optString("status", "error")
 
-                            if (success) {
+                            if (status == "success") {
                                 // ログイン成功
                                 // １－２－３－１－２．グローバル変数loginUserIdに作成したユーザIDを格納する
                                 val loginUserId = json.optString("userId", "")
@@ -164,7 +165,7 @@ class LoginActivity : AppCompatActivity() {
                 })
 
             }
-        }
+
         // １－３．createButtonのクリックイベントリスナーを作成する
         createButton.setOnClickListener {
             // Intentでどの画面に行きたいかを指定する

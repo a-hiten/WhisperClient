@@ -154,6 +154,8 @@ class WhisperActivity : AppCompatActivity() {
                     }
                 }
             })
+
+
         }
 
 //        ２－３－２．ささやき登録処理APIをリクエストして、入力したささやきの登録処理を行う

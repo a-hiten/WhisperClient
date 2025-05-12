@@ -90,21 +90,36 @@ class WhisperActivity : AppCompatActivity() {
                         val json = JSONObject(body)
                         val status = json.optString("status", "error")
 
+
                         if (status == "success") {
                             // ログイン成功
                             // １－２－３－１－２．グローバル変数loginUserIdに作成したユーザIDを格納する
                             val loginUserId = json.optString("userId", "")
 
+
+                            // ２－３－１．入力項目が空白の時、エラーメッセージをトースト表示して処理を終了させる
+                            if (whisperEdit.isBlank()) {
+                                // メッセージ内容：ささやく内容を入力してください
+                                Toast.makeText(
+                                    applicationContext,
+                                    "ささやく内容を入力してください。。",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
                             runOnUiThread {
                                 //１－２－３－１－３．タイムライン画面に遷移する
                                 val intent =
-//                                    Intent(this@LoginActivity, TimelineActivity::class.java)
+                                    Intent(this@WhisperActivity, TimelineActivity::class.java)
                                 intent.putExtra("loginUserId", loginUserId)
                                 startActivity(intent)
 
                                 //　１－２－３－１－４．自分の画面を閉じる
                                 finish()
                             }
+
+
+
                         } else {
                             // ログイン失敗
                             val errorMessage = json.optString("error", "ログインに失敗しました")
@@ -139,22 +154,13 @@ class WhisperActivity : AppCompatActivity() {
                     }
                 }
             })
-
-
         }
-
 
 //        ２－３－２．ささやき登録処理APIをリクエストして、入力したささやきの登録処理を行う
 //        ２－３－２ー１．正常にレスポンスを受け取った時(コールバック処理)
 //        ２－３－２ー１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
-//        　　　　　　　　　　
-//        ２－３－２ー１－２．タイムライン画面に遷移する
-//
-//        ２－３－２ー１－３．自分の画面を閉じる
-//
-//        ２－３－２ー２．リクエストが失敗した時(コールバック処理)
 
-//        ２－３－２ー２－１．エラーメッセージをトースト表示する
+
 
 
         // ２－４．cancelButtonのクリックイベントリスナーを作成する
@@ -163,6 +169,8 @@ class WhisperActivity : AppCompatActivity() {
             finish()
         }
     }
+
+
 
     // オーバーフローメニューを表示するやつ
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -176,7 +184,4 @@ class WhisperActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return OverflowMenuActivity.handleMenuItemSelected(this,item) || super.onOptionsItemSelected(item)
     }
-
-
-
 }

@@ -97,11 +97,13 @@ class LoginActivity : AppCompatActivity() {
                 // BodyのデータをAPIに送る為にRequestBody形式に加工
                 val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
                 // Requestを作成
+
                 val request = Request.Builder()
-                    .url("http://10.0.2.2/TestAPI/test_php/loginAuth.php")  // URL設定
+//                    .url("http://10.0.2.2/WhisperSystem/loginAuth.php")   //自分の環境に変更してください
+                    .url("http://10.0.2.2/TestAPI/test_php/loginAuth.php")
+
                     .post(requestBody)
                     .build()
-
                 // リクエスト送信（非同期処理）
                 client.newCall(request!!).enqueue(object : Callback {
                     // １－２－２－１．正常にレスポンスを受け取った時(コールバック処理)

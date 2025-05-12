@@ -1,5 +1,6 @@
 package com.example.whisperclient
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -11,6 +12,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 
 
 // １．OverFlowMenuActivityクラスを継承する
@@ -46,6 +57,88 @@ class WhisperActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+
+            // １－２－２．ログイン認証APIをリクエストして入力ユーザのログイン認証を行う
+            // HTTP接続用インスタンス生成
+            val client = OkHttpClient()
+            // JSON形式でパラメータを送るようなデータ形式を設定
+            val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
+            // Bodyのデータ（APIに渡したいパラメータを設定）
+            val requestBodyJson = JSONObject().apply {
+                put("whisperEdit", whisperEdit)
+//
+            }
+            // BodyのデータをAPIに送る為にRequestBody形式に加工
+            val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
+            // Requestを作成
+
+            val request = Request.Builder()
+//                    .url("http://10.0.2.2/WhisperSystem/loginAuth.php")   //自分の環境に変更してください
+                .url("http://10.0.2.2/TestAPI/test_php/loginAuth.php")
+
+                .post(requestBody)
+                .build()
+            // リクエスト送信（非同期処理）
+            client.newCall(request!!).enqueue(object : Callback {
+                // １－２－２－１．正常にレスポンスを受け取った時(コールバック処理)
+                override fun onResponse(call: Call, response: Response) {
+                    val body = response.body?.string()
+                    println("レスポンスを受診しました: $body")
+
+                    if (response.isSuccessful && body != null) {
+                        // APIから取得したJSON文字列をJSONオブジェクトに変換
+                        val json = JSONObject(body)
+                        val status = json.optString("status", "error")
+
+                        if (status == "success") {
+                            // ログイン成功
+                            // １－２－３－１－２．グローバル変数loginUserIdに作成したユーザIDを格納する
+                            val loginUserId = json.optString("userId", "")
+
+                            runOnUiThread {
+                                //１－２－３－１－３．タイムライン画面に遷移する
+                                val intent =
+//                                    Intent(this@LoginActivity, TimelineActivity::class.java)
+                                intent.putExtra("loginUserId", loginUserId)
+                                startActivity(intent)
+
+                                //　１－２－３－１－４．自分の画面を閉じる
+                                finish()
+                            }
+                        } else {
+                            // ログイン失敗
+                            val errorMessage = json.optString("error", "ログインに失敗しました")
+                            runOnUiThread {
+                                Toast.makeText(
+                                    applicationContext,
+                                    errorMessage,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    } else {
+                        runOnUiThread {
+                            Toast.makeText(
+                                applicationContext,
+                                "サーバーエラーが発生しました",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }
+
+                // １－２－２－２．リクエストが失敗した時(コールバック処理)
+                override fun onFailure(call: Call, e: IOException) {
+                    runOnUiThread {
+                        // １－２－２－２－１．エラーメッセージをトースト表示する
+                        Toast.makeText(
+                            applicationContext,
+                            "リクエストが失敗しました: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            })
 
 
         }

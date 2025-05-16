@@ -25,23 +25,21 @@ import java.io.IOException
 
 
 // １．OverFlowMenuActivityクラスを継承する
-//class WhisperActivity : AppCompatActivity() {
 class WhisperActivity : OverflowMenuActivity() {
+
+
+
+
     // ２．画面生成時（onCreate処理）
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_whisper)
-        setContentView(R.layout.activity_whisper)
-//        return OverflowMenuActivity.handleMenuItemSelected(this,item) || super.onOptionsItemSelected(item)
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-
 
         // ２－１．画面デザインで定義したオブジェクトを変数として宣言する。
         val whisperEdit = findViewById<EditText>(R.id.whisperEdit)      // 入力できるとこ
@@ -49,7 +47,7 @@ class WhisperActivity : OverflowMenuActivity() {
         val cancelButton = findViewById<Button>(R.id.cancelButton)      // キャンセルボタン
 
         // ２－２．グローバル変数のログインユーザーIDを取得。
-
+        val loginUserId = MyApplication.getInstance().loginUserId
 
         // ２－３．whisperButtonのクリックイベントリスナーを作成する
         whisperButton.setOnClickListener {
@@ -59,12 +57,15 @@ class WhisperActivity : OverflowMenuActivity() {
             // whisperEditが空ならトーストを出す
             if (whisperEdit.isBlank()) {
                 // メッセージ内容：ささやく内容を入力してください
-                Toast.makeText(applicationContext, "ささやく内容を入力してください。", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    applicationContext,
+                    "ささやく内容を入力してください。",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             }
 
-
-            // １－２－２．ログイン認証APIをリクエストして入力ユーザのログイン認証を行う
+            // ２－３－２．ささやき登録処理APIをリクエストして、入力したささやきの登録処理を行う
             // HTTP接続用インスタンス生成
             val client = OkHttpClient()
             // JSON形式でパラメータを送るようなデータ形式を設定
@@ -72,7 +73,7 @@ class WhisperActivity : OverflowMenuActivity() {
             // Bodyのデータ（APIに渡したいパラメータを設定）
             val requestBodyJson = JSONObject().apply {
                 put("whisperEdit", whisperEdit)
-//
+
             }
             // BodyのデータをAPIに送る為にRequestBody形式に加工
             val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
@@ -81,74 +82,41 @@ class WhisperActivity : OverflowMenuActivity() {
             val request = Request.Builder()
 //                    .url("http://10.0.2.2/WhisperSystem/loginAuth.php")   //自分の環境に変更してください
                 .url("http://10.0.2.2/TestAPI/test_php/loginAuth.php")
-
                 .post(requestBody)
                 .build()
+
             // リクエスト送信（非同期処理）
             client.newCall(request!!).enqueue(object : Callback {
-                // １－２－２－１．正常にレスポンスを受け取った時(コールバック処理)
+                // ２－３－２ー１．正常にレスポンスを受け取った時(コールバック処理)
                 override fun onResponse(call: Call, response: Response) {
-                    val body = response.body?.string()
-                    println("レスポンスを受診しました: $body")
+                    val bodyStr = response.body?.string().orEmpty()
+                    runOnUiThread {
+                        if (!response.isSuccessful) {
+                            Toast.makeText(applicationContext, "サーバーエラーが発生しました", Toast.LENGTH_SHORT).show()
+                            return@runOnUiThread
+                        }
 
-                    if (response.isSuccessful && body != null) {
-                        // APIから取得したJSON文字列をJSONオブジェクトに変換
-                        val json = JSONObject(body)
+                        val json = JSONObject(bodyStr)
                         val status = json.optString("status", "error")
 
-
-                        if (status == "success") {
-                            // ログイン成功
-                            // １－２－３－１－２．グローバル変数loginUserIdに作成したユーザIDを格納する
-                            val loginUserId = json.optString("userId", "")
-
-
-                            // ２－３－１．入力項目が空白の時、エラーメッセージをトースト表示して処理を終了させる
-                            if (whisperEdit.isBlank()) {
-                                // メッセージ内容：ささやく内容を入力してください
-                                Toast.makeText(
-                                    applicationContext,
-                                    "ささやく内容を入力してください。。",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-
-                            runOnUiThread {
-                                //１－２－３－１－３．タイムライン画面に遷移する
-                                val intent =
-                                    Intent(this@WhisperActivity, TimelineActivity::class.java)
-                                intent.putExtra("loginUserId", loginUserId)
-                                startActivity(intent)
-
-                                //　１－２－３－１－４．自分の画面を閉じる
-                                finish()
-                            }
-
-
-
-                        } else {
-                            // ログイン失敗
-                            val errorMessage = json.optString("error", "ログインに失敗しました")
-                            runOnUiThread {
-                                Toast.makeText(
-                                    applicationContext,
-                                    errorMessage,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                        // ２－３－２ー１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
+                        if (status != "success") {
+                            val errMsg = json.optString("error", "登録に失敗しました")
+                            Toast.makeText(applicationContext, errMsg, Toast.LENGTH_SHORT).show()
+                            return@runOnUiThread
                         }
-                    } else {
-                        runOnUiThread {
-                            Toast.makeText(
-                                applicationContext,
-                                "サーバーエラーが発生しました",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
+
+                        // ２－３－２ー１－２．タイムライン画面に遷移する
+                        val intent = Intent(this@WhisperActivity, TimelineActivity::class.java)
+                        intent.putExtra("loginUserId", loginUserId)
+                        startActivity(intent)
+
+                        // ２－３－２ー１－３．自分の画面を閉じる
+                        finish()
                     }
                 }
 
-                // １－２－２－２．リクエストが失敗した時(コールバック処理)
+                // ２－３－２ー２．リクエストが失敗した時(コールバック処理)
                 override fun onFailure(call: Call, e: IOException) {
                     runOnUiThread {
                         // １－２－２－２－１．エラーメッセージをトースト表示する
@@ -161,66 +129,16 @@ class WhisperActivity : OverflowMenuActivity() {
                 }
             })
 
-
-        }
-
-//        ２－３－２．ささやき登録処理APIをリクエストして、入力したささやきの登録処理を行う
-//        ２－３－２ー１．正常にレスポンスを受け取った時(コールバック処理)
-//        ２－３－２ー１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
-
-
-
-
-        // ２－４．cancelButtonのクリックイベントリスナーを作成する
-        cancelButton.setOnClickListener {
-            // ２－４－１．自分の画面を閉じる
-            finish()
+            // ２－４．cancelButtonのクリックイベントリスナーを作成する
+            cancelButton.setOnClickListener {
+                // ２－４－１．自分の画面を閉じる
+                finish()
+            }
         }
     }
-
-
-    /*
-    class WhisperActivity : OverflowMenuActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_whisper)
-        // 他の固有処理だけ書く
-    }
-    // onCreateOptionsMenuやonOptionsItemSelectedは親クラスのを使うので不要
-}
-     */
-
-
 
     // オーバーフローメニューを選んだ時に共通処理を呼び出す。
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return OverflowMenuActivity.handleMenuItemSelected(this,item) || super.onOptionsItemSelected(item)
     }
 }
-
-/*
-１．OverFlowMenuActivityクラスを継承する
-
-２．画面生成時（onCreate処理）
-２－１．画面デザインで定義したオブジェクトを変数として宣言する。
-
-２－２．グローバル変数のログインユーザーIDを取得。
-
-２－３．whisperButtonのクリックイベントリスナーを作成する
-２－３－１．入力項目が空白の時、エラーメッセージをトースト表示して処理を終了させる
-
-
-２－３－２．ささやき登録処理APIをリクエストして、入力したささやきの登録処理を行う
-２－３－２ー１．正常にレスポンスを受け取った時(コールバック処理)
-２－３－２ー１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
-　　　　　　　　　　
-２－３－２ー１－２．タイムライン画面に遷移する
-
-２－３－２ー１－３．自分の画面を閉じる
-
-２－３－２ー２．リクエストが失敗した時(コールバック処理)
-２－３－２ー２－１．エラーメッセージをトースト表示する
-
-２－４．cancelButtonのクリックイベントリスナーを作成する
-２－４－１．自分の画面を閉じる
- */

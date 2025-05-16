@@ -66,20 +66,6 @@ class OverflowMenuActivity : AppCompatActivity() {
                     //    ２－２－３－２．戻り値にtrueをセットする
                     true
                 }
-//                //    ２－２－４．受け取ったMenuItemがmyprofileの時
-//                R.id.myprofile ->{
-//                    //    ２－２－４－１．インテントにログインユーザIDをセットする
-//                    val intent = Intent(activity, UserInfoActivity::class.java)
-//                    /*
-//                    loginUserIdをUser_Idという名前で次の名前に渡す準備をしてる
-//                    putExtra：インテントに追加情報を詰め込むためのもの
-//                     */
-//                    intent.putExtra("USER_ID", MyApplication.getInstance().loginUserId)
-//                    //    ２－２－４－２．ユーザ情報画面に遷移する
-//                    activity.startActivity(intent)
-//                    //    ２－２－４－３．戻り値にtrueをセットする
-//                    true
-//                }
                 //    ２－２－４．受け取ったMenuItemがmyprofileの時
                 R.id.myprofile ->{
                     //    ２－２－４－１．インテントにログインユーザIDをセットする
@@ -101,7 +87,7 @@ class OverflowMenuActivity : AppCompatActivity() {
                     intent.putExtra("USER_ID", MyApplication.getInstance().loginUserId)
                     //    ２－２－５－２．プロフィール編集画面に遷移する
                     activity.startActivity(intent)
-
+                    //    ２－２－5－３．戻り値にtrueをセットする
                     true
                 }
                 //    ２－２－６．受け取ったMenuItemがlogoutの時

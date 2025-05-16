@@ -27,9 +27,6 @@ import java.io.IOException
 // １．OverFlowMenuActivityクラスを継承する
 class WhisperActivity : OverflowMenuActivity() {
 
-
-
-
     // ２．画面生成時（onCreate処理）
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

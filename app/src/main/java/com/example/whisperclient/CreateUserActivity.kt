@@ -49,8 +49,6 @@ class CreateUserActivity : AppCompatActivity() {
             val password = passwordEdit.text.toString()
             val repassword = rePasswordEdit.text.toString()
 
-
-
             // isBlankで未入力チェックしてる。
             // 全ての項目が空の場合
             if (userName.isBlank() && userId.isBlank() && password.isBlank() && repassword.isBlank()) {
@@ -62,7 +60,6 @@ class CreateUserActivity : AppCompatActivity() {
                 ).show()
                 return@setOnClickListener
             }
-
             // 入力されていない項目がある場合　＊仕様書には書いていない処理です。
             if (userName.isBlank() || userId.isBlank() || password.isBlank() || repassword.isBlank()) {
                 // メッセージ内容：入力されていない項目があります。
@@ -73,7 +70,6 @@ class CreateUserActivity : AppCompatActivity() {
                 ).show()
                 return@setOnClickListener
             }
-
             // １－２－２．パスワードと確認パスワードの内容が違う時、エラーメッセージをトースト表示して処理を終了させる
             if (password != repassword) {
                 // メッセージ内容：「パスワードが一致しません」
@@ -118,13 +114,6 @@ class CreateUserActivity : AppCompatActivity() {
                     }
 
 //                    val cBt = Intent(this, TimelineActivity::class.java)
-//                    // １－３．createButtonのクリックイベントリスナーを作成する
-//                    createButton.setOnClickListener {
-//                        // Intentでどの画面に行きたいかを指定する
-//                        val createBt = Intent(this, TimelineActivity::class.java)
-//                        // １－３－１．ユーザ作成画面に遷移する
-//                        startActivity(createBt)
-//                    }
 
 
                     // １－２－３－２．リクエストが失敗した時(コールバック処理)
@@ -163,3 +152,31 @@ class CreateUserActivity : AppCompatActivity() {
 
     }
 }
+
+
+
+//１．画面生成時（onCreate処理）
+//１－１．画面デザインで定義したオブジェクトを変数として宣言する。
+//
+//１－２．createButtonのクリックイベントリスナーを作成する
+//１－２－１．入力項目が空白の時、エラーメッセージをトースト表示して処理を終了させる
+//メッセージ内容：「全ての項目を入力してください」
+//
+//１－２－２．パスワードと確認パスワードの内容が違う時、エラーメッセージをトースト表示して処理を終了させる
+//メッセージ内容：「パスワードが一致しません」
+//
+//１－２－３．ユーザ作成処理APIをリクエストしてユーザの追加を行う
+//１－２－３－１．正常にレスポンスを受け取った時(コールバック処理)
+//１－２－３－１ー１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
+//
+//１－２－３－１ー２．グローバル変数loginUserIdに作成したユーザIDを格納する
+//
+//１－２－３－１ー３．タイムライン画面に遷移する
+//
+//１－２－３－１ー４．自分の画面を閉じる
+//
+//１－２－３－２．リクエストが失敗した時(コールバック処理)
+//１－２－３－２ー１．エラーメッセージをトースト表示する
+//
+//１－３．cancelButtonのクリックイベントリスナーを作成する
+//１－３－１．自分の画面を閉じる

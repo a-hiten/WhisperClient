@@ -23,7 +23,6 @@ import okhttp3.Response
 import org.json.JSONObject
 import java.io.IOException
 
-
 // １．OverFlowMenuActivityクラスを継承する
 class WhisperActivity : OverflowMenuActivity() {
 
@@ -77,8 +76,8 @@ class WhisperActivity : OverflowMenuActivity() {
             // Requestを作成
 
             val request = Request.Builder()
-//                    .url("http://10.0.2.2/WhisperSystem/loginAuth.php")   //自分の環境に変更してください
-                .url("http://10.0.2.2/TestAPI/test_php/loginAuth.php")
+                .url("http://10.0.2.2/TestAPI/test_php/whisperAdd.php")
+//                .url("http://10.0.2.2/フォルダ名/ファイル名)   //10.0.2.2の後を自分の環境に変更してください
                 .post(requestBody)
                 .build()
 

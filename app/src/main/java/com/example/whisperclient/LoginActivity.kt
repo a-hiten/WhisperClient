@@ -98,8 +98,8 @@ class LoginActivity : AppCompatActivity() {
                 // Requestを作成
 
                 val request = Request.Builder()
-//                    .url("http://10.0.2.2/WhisperSystem/loginAuth.php")   //自分の環境に変更してください
                     .url("http://10.0.2.2/TestAPI/test_php/loginAuth.php")
+//                    .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
 
                     .post(requestBody)
                     .build()

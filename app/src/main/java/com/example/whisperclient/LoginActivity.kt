@@ -98,7 +98,7 @@ class LoginActivity : AppCompatActivity() {
                 // Requestを作成
 
                 val request = Request.Builder()
-                    .url("http://10.0.2.2/TestAPI/test_php/loginAuth.php")
+                    .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/loginAuth.php")
 //                    .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
 
                     .post(requestBody)
@@ -110,15 +110,17 @@ class LoginActivity : AppCompatActivity() {
                         val body = response.body?.string()
                         println("レスポンスを受診しました: $body")
 
+
                         if (response.isSuccessful && body != null) {
                             // APIから取得したJSON文字列をJSONオブジェクトに変換
                             val json = JSONObject(body)
-                            val status = json.optString("status", "error")
+                            val status = json.optString("status", json.optString("result", "error"))
 
                             if (status == "success") {
                                 // ログイン成功
-                                // １－２－３－１－２．グローバル変数loginUserIdに作成したユーザIDを格納する
-                                val loginUserId = json.optString("userId", "")
+                                // test@ecc１－２－３－１－２．グローバル変数loginUserIdに作成したユーザIDを格納する
+                                val loginUserId = json.optString("userId", userId)
+
 
                                 runOnUiThread {
                                     //１－２－３－１－３．タイムライン画面に遷移する

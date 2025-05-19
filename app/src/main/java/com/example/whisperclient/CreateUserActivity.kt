@@ -108,7 +108,7 @@ class CreateUserActivity : AppCompatActivity() {
                         val bodyStr = response.body?.string().orEmpty()
                         runOnUiThread {
                             val json = JSONObject(bodyStr)
-                            val status = json.optString("status", "error")
+                            val status = json.optString("status", json.optString("result", "error"))
 
                             // １－２－３－１ー１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
                             if (status != "success") {

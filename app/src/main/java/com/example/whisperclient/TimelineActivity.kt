@@ -9,8 +9,17 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import org.json.JSONObject
 import java.io.IOException
 
 // １．OverFlowMenuActivityクラスを継承する
@@ -29,48 +38,85 @@ class TimelineActivity : OverflowMenuActivity() {
 
         // ２－１．画面デザインで定義したオブジェクトを変数として宣言する。
         val recyclerView = findViewById<RecyclerView>(R.id.timelineRecycle)      // listの内容はささやき行情報を参照
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         // ２－２．グローバル変数のログインユーザーIDを取得。
         val loginUserId = MyApplication.getInstance().loginUserId
 
 
-        /*
-        ２－３．タイムライン情報取得APIをリクエストしてログインユーザが確認できるささやき情報取得を行う
-        ２－３－１．正常にレスポンスを受け取った時(コールバック処理)
-        ２－２－３－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
+        // １－２－２．ログイン認証APIをリクエストして入力ユーザのログイン認証を行う
+        // HTTP接続用インスタンス生成
+        val client = OkHttpClient()
+        // JSON形式でパラメータを送るようなデータ形式を設定
+        val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
+        // Bodyのデータ（APIに渡したいパラメータを設定）
+        val requestBodyJson = JSONObject().apply {
+            put("loginUserId", loginUserId)
+        }
+        // BodyのデータをAPIに送る為にRequestBody形式に加工
+        val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
+        // Requestを作成
 
-        ２－２－３－２．ささやき情報一覧が存在する間、以下の処理を繰り返す
-        ２－２－３－２－１．ささやき情報をリストに格納する
+        val request = Request.Builder()
+            .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/timelineInfo.php")
+//            .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
+            .post(requestBody)
+            .build()
 
-        ２－２－３－３．timelineRecycleにささやき情報リストをセットする
+        // リクエスト送信（非同期処理）
+        client.newCall(request).enqueue(object : Callback {
+            // １－２－２－１．正常にレスポンスを受け取った時(コールバック処理)
+            override fun onResponse(call: Call, response: Response) {
+                val body = response.body?.string()
+                println("レスポンスを受診しました: $body")
+                
+                if (response.isSuccessful && body != null) {
+                    // APIから取得したJSON文字列をJSONオブジェクトに変換
+                    val json = JSONObject(body)
+                    val status = json.optString("status", json.optString("result", "error"))
+                }
+            }
 
-         */
-
-        // ２－３－２．リクエストが失敗した時(コールバック処理)
-//        override fun onFailure(call: Call, e: IOException) {
-//            runOnUiThread {
-//                // ２－３－２－１．エラーメッセージをトースト表示する
-//                Toast.makeText(
-//                    applicationContext,
-//                    "リクエストが失敗しました: ${e.message}",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            }
-//        }
-
-
-
-
-
-
-
-
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    // １－２－３－２ー１．エラーメッセージをトースト表示する
+                    Toast.makeText(
+                        applicationContext,
+                        "リクエストが失敗しました: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        })
     }
-
-
-
     // オーバーフローメニューを選んだ時に共通処理を呼び出す。
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return OverflowMenuActivity.handleMenuItemSelected(this,item) || super.onOptionsItemSelected(item)
     }
 }
+
+
+
+/*
+１．OverFlowMenuActivityクラスを継承する
+
+２．画面生成時（onCreate処理）
+	２－１．画面デザインで定義したオブジェクトを変数として宣言する。
+
+	２－２．グローバル変数のログインユーザーIDを取得。
+
+	２－３．タイムライン情報取得APIをリクエストしてログインユーザが確認できるささやき情報取得を行う
+		２－３－１．正常にレスポンスを受け取った時(コールバック処理)
+			２－２－３－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
+
+			２－２－３－２．ささやき情報一覧が存在する間、以下の処理を繰り返す
+				２－２－３－２－１．ささやき情報をリストに格納する
+
+			２－２－３－３．timelineRecycleにささやき情報リストをセットする
+
+		２－３－２．リクエストが失敗した時(コールバック処理)
+			２－３－２－１．エラーメッセージをトースト表示する
+
+
+   */
+

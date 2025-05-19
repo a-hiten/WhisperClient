@@ -27,5 +27,6 @@
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timelineText" />
+        app:layout_constraintTop_toBottomOf="@+id/timelineText"
+        tools:listitem="@layout/whisper_recycle_row" />
 </androidx.constraintlayout.widget.ConstraintLayout>

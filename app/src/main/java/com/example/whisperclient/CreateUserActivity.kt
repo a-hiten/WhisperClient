@@ -90,7 +90,9 @@ class CreateUserActivity : AppCompatActivity() {
                 val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
                 // Bodyのデータ(APIに渡したいパラメータを設定)
                 val requestBodyJson = JSONObject().apply {
-//                    put("productNo", editText.text)
+                    put("userName", userName)
+                    put("userId", userId)
+                    put("password", password)
                 }
                 // BodyのデータをAPIに送るためにRequestBody形式に加工
                 val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
@@ -153,6 +155,8 @@ class CreateUserActivity : AppCompatActivity() {
         }
     }
 }
+
+
 
 
 //１．画面生成時（onCreate処理）

@@ -8,7 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class UserInfoActivity : AppCompatActivity() {
+// オーバーフローメニューを継承をする
+class UserInfoActivity : OverflowMenuActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -19,13 +20,7 @@ class UserInfoActivity : AppCompatActivity() {
             insets
         }
     }
-    // オーバーフローメニューを表示するやつ
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        //    ２－１－１．インフレータにオーバーフローメニューのデザインを設定する
-        menuInflater.inflate(R.menu.menu_item, menu)
-        //    ２－１－２．戻り値にtrueをセットする
-        return true
-    }
+
 
     // オーバーフローメニューを選んだ時に共通処理を呼び出す。
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

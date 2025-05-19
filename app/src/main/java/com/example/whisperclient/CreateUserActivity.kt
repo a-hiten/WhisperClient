@@ -99,60 +99,59 @@ class CreateUserActivity : AppCompatActivity() {
                     .post(requestBody) // リクエストするパラメータ設定
                     .build()
 
-
-
-                // １－２－３－１．正常にレスポンスを受け取った時(コールバック処理)
-                // リクエスト送信（非同期処理）
-                client.newCall(request!!).enqueue(object : Callback {
-                    // リクエストが成功した場合の処理を実装
+                client.newCall(request).enqueue(object : Callback {
+                    // １－２－３－１．正常にレスポンスを受け取った時(コールバック処理)
                     override fun onResponse(call: Call, response: Response) {
-                        val body = response.body?.string()
-                        println("レスポンスを受信しました: $body")
-                        // postメソッドを使うことでUIを操作することができる。(runOnUiThreadメソッドでも可)
-//                    textView.post { textView.text = body }
+                        val bodyStr = response.body?.string().orEmpty()
+                        runOnUiThread {
+                            val json = JSONObject(bodyStr)
+                            val status = json.optString("status", "error")
 
+                            // １－２－３－１ー１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
+                            if (status != "success") {
+                                val errMsg = json.optString("error", "ユーザー作成に失敗しました")
+                                Toast.makeText(applicationContext, errMsg, Toast.LENGTH_SHORT)
+                                    .show()
+                                return@runOnUiThread
+                            }
+
+                            // １－２－３－１ー２．グローバル変数loginUserIdに作成したユーザIDを格納する
+                            val createdUserId = json.optString("userId", userId)
+                            MyApplication.getInstance().loginUserId = createdUserId
+
+                            // １－２－３－１ー３．タイムライン画面に遷移する
+                            val intent =
+                                Intent(this@CreateUserActivity, TimelineActivity::class.java)
+                            intent.putExtra("loginUserId", createdUserId)
+                            startActivity(intent)
+
+                            // １－２－３－１ー４．自分の画面を閉じる
+                            finish()
+                        }
                     }
-
-//                    val cBt = Intent(this, TimelineActivity::class.java)
-
 
                     // １－２－３－２．リクエストが失敗した時(コールバック処理)
-                    // リクエストが失敗した場合の処理を実装
                     override fun onFailure(call: Call, e: IOException) {
-                        // メッセージ内容：全ての項目を入力してください。
-                        Toast.makeText(
-                            applicationContext,
-                            "リクエストが失敗しました。。",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        runOnUiThread {
+                            // １－２－３－２ー１．エラーメッセージをトースト表示する
+                            Toast.makeText(
+                                applicationContext,
+                                "リクエストが失敗しました: ${e.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
-
                 })
-
-                //        １－２－３．ユーザ作成処理APIをリクエストしてユーザの追加を行う
-
-
-
-
             }
 
+            // １－３．cancelButtonのクリックイベントリスナーを作成する
+            cancelButton.setOnClickListener {
+                // １－３－１．自分の画面を閉じる
+                finish()
+            }
         }
-
-
-
-
-
-
-
-        // １－３．cancelButtonのクリックイベントリスナーを作成する
-        cancelButton.setOnClickListener {
-            // １－３－１．自分の画面を閉じる
-            finish()
-        }
-
     }
 }
-
 
 
 //１．画面生成時（onCreate処理）

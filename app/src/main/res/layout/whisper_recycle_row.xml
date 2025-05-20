@@ -40,7 +40,7 @@
         app:layout_constraintTop_toBottomOf="@+id/userNameText" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/goodImage"
         android:layout_width="70dp"
         android:layout_height="66dp"
         android:layout_marginTop="40dp"

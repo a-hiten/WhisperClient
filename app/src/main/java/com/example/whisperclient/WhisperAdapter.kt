@@ -89,8 +89,6 @@ class WhisperAdapter(private  val dataset: MutableList<WhisperRowData>,private v
     }
 
 
-
-
     // ３－５．行数取得時（getItemCount処理）
     override fun getItemCount(): Int {
         // ３－５－１．行リストの件数（データセットのサイズ）を戻り値にセットする

@@ -2,6 +2,7 @@ package com.example.whisperclient
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
@@ -36,6 +37,8 @@ class WhisperActivity : OverflowMenuActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        Log.d("チェック", "MyApplication.loginUserId = [${MyApplication.getInstance().loginUserId}]")
+
 
         // ２－１．画面デザインで定義したオブジェクトを変数として宣言する。
         val whisperEdit = findViewById<EditText>(R.id.whisperEdit)      // 入力できるとこ
@@ -43,7 +46,12 @@ class WhisperActivity : OverflowMenuActivity() {
         val cancelButton = findViewById<Button>(R.id.cancelButton)      // キャンセルボタン
 
         // ２－２．グローバル変数のログインユーザーIDを取得。
-        val loginUserId = MyApplication.getInstance().loginUserId
+//        val loginUserId = MyApplication.getInstance().loginUserId
+//        Log.d("チェック", loginUserId)
+
+        val loginUserId = MyApplication.getInstance().loginUserId ?: "null or empty"
+        Log.d("チェック", "loginUserId = [$loginUserId]")
+
 
         // ２－３．whisperButtonのクリックイベントリスナーを作成する
         whisperButton.setOnClickListener {
@@ -69,14 +77,19 @@ class WhisperActivity : OverflowMenuActivity() {
             // Bodyのデータ（APIに渡したいパラメータを設定）
             val requestBodyJson = JSONObject().apply {
                 put("whisperEdit", whisperEdit)
+                put("userId", loginUserId)
+
+
 
             }
             // BodyのデータをAPIに送る為にRequestBody形式に加工
             val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
             // Requestを作成
-
             val request = Request.Builder()
-                .url("http://10.0.2.2/TestAPI/test_php/whisperAdd.php")
+
+                .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/whisperAdd.php")
+//                .url("http://10.0.2.2/TestAPI/test_php/whisperAdd.php")
+
 //                .url("http://10.0.2.2/フォルダ名/ファイル名)   //10.0.2.2の後を自分の環境に変更してください
                 .post(requestBody)
                 .build()
@@ -85,7 +98,11 @@ class WhisperActivity : OverflowMenuActivity() {
             client.newCall(request!!).enqueue(object : Callback {
                 // ２－３－２ー１．正常にレスポンスを受け取った時(コールバック処理)
                 override fun onResponse(call: Call, response: Response) {
+
                     val bodyStr = response.body?.string().orEmpty()
+
+                    Log.d("APIのれすぽんすじゃ！", bodyStr)
+
                     runOnUiThread {
                         if (!response.isSuccessful) {
                             Toast.makeText(applicationContext, "サーバーエラーが発生しました", Toast.LENGTH_SHORT).show()
@@ -93,7 +110,7 @@ class WhisperActivity : OverflowMenuActivity() {
                         }
 
                         val json = JSONObject(bodyStr)
-                        val status = json.optString("status", "error")
+                        val status = json.optString("status", json.optString("result", "error"))
 
                         // ２－３－２ー１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
                         if (status != "success") {
@@ -124,12 +141,11 @@ class WhisperActivity : OverflowMenuActivity() {
                     }
                 }
             })
-
-            // ２－４．cancelButtonのクリックイベントリスナーを作成する
-            cancelButton.setOnClickListener {
-                // ２－４－１．自分の画面を閉じる
-                finish()
-            }
+        }
+        // ２－４．cancelButtonのクリックイベントリスナーを作成する
+        cancelButton.setOnClickListener {
+            // ２－４－１．自分の画面を閉じる
+            finish()
         }
     }
 
@@ -138,3 +154,6 @@ class WhisperActivity : OverflowMenuActivity() {
         return OverflowMenuActivity.handleMenuItemSelected(this,item) || super.onOptionsItemSelected(item)
     }
 }
+
+
+

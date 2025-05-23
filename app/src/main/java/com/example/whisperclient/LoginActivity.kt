@@ -121,6 +121,8 @@ class LoginActivity : AppCompatActivity() {
                                 // ログイン成功
                                 // test@ecc１－２－３－１－２．グローバル変数loginUserIdに作成したユーザIDを格納する
                                 val loginUserId = json.optString("userId", userId)
+                                // グローバル変数にセットしてる
+                                MyApplication.getInstance().loginUserId = loginUserId
 
 
                                 runOnUiThread {

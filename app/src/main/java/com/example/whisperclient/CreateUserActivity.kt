@@ -102,7 +102,6 @@ class CreateUserActivity : AppCompatActivity() {
                 .post(requestBody) // リクエストするパラメータ設定
                 .build()
 
-
             client.newCall(request).enqueue(object : Callback {
                 // １－２－３－１．正常にレスポンスを受け取った時(コールバック処理)
                 override fun onResponse(call: Call, response: Response) {

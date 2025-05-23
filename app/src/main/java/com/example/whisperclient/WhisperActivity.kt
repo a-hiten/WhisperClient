@@ -70,10 +70,8 @@ class WhisperActivity : OverflowMenuActivity() {
                 return@setOnClickListener
             }
 
-            println("めっせーじ" + whisperEdit)
-            Log.d("チェック", "送信先URL = ${MyApplication.getInstance().apiUrl + "whisperInsertAPI.php"}")
-
-
+//            println("めっせーじ" + whisperEdit)
+//            Log.d("チェック", "送信先URL = ${MyApplication.getInstance().apiUrl + "whisperInsertAPI.php"}")
 
 
             // ２－３－２．ささやき登録処理APIをリクエストして、入力したささやきの登録処理を行う
@@ -83,7 +81,7 @@ class WhisperActivity : OverflowMenuActivity() {
             val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
             // Bodyのデータ（APIに渡したいパラメータを設定）
             val requestBodyJson = JSONObject().apply {
-                put("whisperEdit", whisperEdit)
+                put("content", whisperEdit)
                 put("userId", loginUserId)
             }
 
@@ -106,7 +104,7 @@ class WhisperActivity : OverflowMenuActivity() {
 
                     val bodyStr = response.body?.string().orEmpty()
 
-                    Log.d("APIのれすぽんすじゃ！", bodyStr)
+//                    Log.d("APIのれすぽんすじゃ！", bodyStr)
 
                     runOnUiThread {
                         if (!response.isSuccessful) {

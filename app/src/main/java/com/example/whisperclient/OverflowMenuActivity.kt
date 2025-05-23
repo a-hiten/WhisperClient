@@ -10,23 +10,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 open class OverflowMenuActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_overflow_menu)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-        // グローバル変数にインテントから受け取ったログインユーザIDを保存
-        /*
-        この画面が呼び出されたときに受け取ったユーザIDを、アプリ全体で使えるように保存している。
-        getStringExtra：前の画面から送られてきた文字列のデータを受け取る
-         */
-        val userId = intent.getStringExtra("USER_ID") ?: ""
-        MyApplication.getInstance().loginUserId = userId
-    }
     //    ２．オーバーフローメニュー作成（アクティビティ名：OverflowMenuActivity）
     //    ２－１．オプションメニュー生成時（onCreateOptionsMenu処理）
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

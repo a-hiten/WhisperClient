@@ -37,6 +37,7 @@ class WhisperActivity : OverflowMenuActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        Log.d("チェック", "MyApplication.loginUserId = [${MyApplication.getInstance()}]")
         Log.d("チェック", "MyApplication.loginUserId = [${MyApplication.getInstance().loginUserId}]")
 
 
@@ -69,6 +70,12 @@ class WhisperActivity : OverflowMenuActivity() {
                 return@setOnClickListener
             }
 
+            println("めっせーじ" + whisperEdit)
+            Log.d("チェック", "送信先URL = ${MyApplication.getInstance().apiUrl + "whisperInsertAPI.php"}")
+
+
+
+
             // ２－３－２．ささやき登録処理APIをリクエストして、入力したささやきの登録処理を行う
             // HTTP接続用インスタンス生成
             val client = OkHttpClient()
@@ -78,10 +85,8 @@ class WhisperActivity : OverflowMenuActivity() {
             val requestBodyJson = JSONObject().apply {
                 put("whisperEdit", whisperEdit)
                 put("userId", loginUserId)
-
-
-
             }
+
             // BodyのデータをAPIに送る為にRequestBody形式に加工
             val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
             // Requestを作成

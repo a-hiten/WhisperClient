@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.AttributeSet
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -122,8 +123,9 @@ class LoginActivity : AppCompatActivity() {
                                 // test@ecc１－２－３－１－２．グローバル変数loginUserIdに作成したユーザIDを格納する
                                 val loginUserId = json.optString("userId", userId)
                                 // グローバル変数にセットしてる
+                                Log.d("loginUserId", loginUserId)
                                 MyApplication.getInstance().loginUserId = loginUserId
-
+                                Log.d("MyApplication.getInstance().loginUserId", MyApplication.getInstance().loginUserId)
 
                                 runOnUiThread {
                                     //１－２－３－１－３．タイムライン画面に遷移する

@@ -105,7 +105,7 @@ class UserEditActivity : OverflowMenuActivity() {
                 }
             }
         })
-        
+
         /*
         ２－３．ユーザ情報取得APIをリクエストしてログインユーザのユーザ情報取得処理を行う
             ２－３－１．正常にレスポンスを受け取った時(コールバック処理)

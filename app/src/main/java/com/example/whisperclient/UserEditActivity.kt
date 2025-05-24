@@ -53,6 +53,59 @@ class UserEditActivity : OverflowMenuActivity() {
 
 
 
+        // HTTP接続用インスタンス生成
+        val client = OkHttpClient()
+        // JSON形式でパラメータを送るようなデータ形式を設定
+        val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
+        // Bodyのデータ（APIに渡したいパラメータを設定）
+        val requestBodyJson = JSONObject().apply {
+            put("userId", loginUserId)   // ユーザID
+        }
+        // BodyのデータをAPIに送る為にRequestBody形式に加工
+        val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
+        // Requestを作成
+        val request = Request.Builder()
+            .url("https://dfghjk.fgh.fg.kk/jjj/aaaaa/WhisperSystem/userSel.php")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            // ２－３－１．正常にレスポンスを受け取った時(コールバック処理)
+            override fun onResponse(call: Call, response: Response) {
+                val bodyStr = response.body?.string().orEmpty()
+
+                runOnUiThread {
+                    val json = JSONObject(bodyStr)
+                    val status = json.optString("status", json.optString("result", "error"))
+
+                    // ２－３－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
+                    if (status != "success") {
+                        val errMsg = json.optString("error", "ユーザ情報の取得に失敗しました")
+                        Toast.makeText(applicationContext, errMsg, Toast.LENGTH_SHORT).show()
+                        return@runOnUiThread
+                    }
+
+                    // ２－３－１－２．取得したデータを各オブジェクトにセットする
+                    val dataObj = json.getJSONObject("data")
+                    userId.text = dataObj.optString("userId")
+                    userName.setText(dataObj.optString("userName"))
+                    profile.setText(dataObj.optString("profile"))
+                    // userImage への設定は必要に応じて実装
+                }
+            }
+            // ２－３－２．リクエストが失敗した時(コールバック処理)
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    // ２－３－２－１．エラーメッセージをトースト表示する
+                    Toast.makeText(
+                        applicationContext,
+                        "ユーザ情報の取得に失敗しました: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        })
+        
         /*
         ２－３．ユーザ情報取得APIをリクエストしてログインユーザのユーザ情報取得処理を行う
             ２－３－１．正常にレスポンスを受け取った時(コールバック処理)
@@ -97,7 +150,6 @@ class UserEditActivity : OverflowMenuActivity() {
                 override fun onResponse(call: Call, response: Response) {
 
                     val bodyStr = response.body?.string().orEmpty()
-
 //                    Log.d("APIのれすぽんすじゃ！", bodyStr)
 
                     runOnUiThread {
@@ -115,10 +167,6 @@ class UserEditActivity : OverflowMenuActivity() {
                             Toast.makeText(applicationContext, errMsg, Toast.LENGTH_SHORT).show()
                             return@runOnUiThread
                         }
-
-
-
-
                         // ２－４－１－１－２．ユーザ情報画面に遷移する
                         val intent = Intent(this@UserEditActivity, UserInfoActivity::class.java)
                         intent.putExtra("loginUserId", loginUserId)
@@ -128,7 +176,6 @@ class UserEditActivity : OverflowMenuActivity() {
                         finish()
                     }
                 }
-
                 // ２－４－１－２．リクエストが失敗した時(コールバック処理)
                 override fun onFailure(call: Call, e: IOException) {
                     runOnUiThread {
@@ -142,24 +189,7 @@ class UserEditActivity : OverflowMenuActivity() {
                 }
             })
 
-
         }
-
-
-
-        /*
-
-
-
-                　　　　　　　　　　
-
-
-
-
-
-         */
-
-
 
         // ２－５．cancelButtonのクリックイベントリスナーを作成する
         cancelBt.setOnClickListener {

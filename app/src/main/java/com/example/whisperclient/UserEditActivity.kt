@@ -1,17 +1,31 @@
 package com.example.whisperclient
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 
+// １．OverFlowMenuActivityクラスを継承する
 class UserEditActivity : OverflowMenuActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,12 +37,135 @@ class UserEditActivity : OverflowMenuActivity() {
             insets
         }
 
-        val userImage = findViewById<ImageView>(R.id.userImage)      //　自分のプロフィール画像
-        val userId = findViewById<TextView>(R.id.userIdText)
-        val userName = findViewById<EditText>(R.id.userNameEdit)
-        val Profile = findViewById<EditText>(R.id.profileEdit)
-        val Change = findViewById<Button>(R.id.changeButton)
-        val cancel = findViewById<Button>(R.id.cancelButton)
+        // ２－１．画面デザインで定義したオブジェクトを変数として宣言する。
+        val userImage = findViewById<ImageView>(R.id.userImage)         //　自分のプロフィール画像
+        val userId = findViewById<TextView>(R.id.userIdText)            // ユーザID（メールアドレスのこと？）
+        val userName = findViewById<EditText>(R.id.userNameEdit)        // ユーザの名前
+        val profile = findViewById<EditText>(R.id.profileEdit)          // プロフィール入力場所（自己紹介とか書くとこ）
+        val changeBt = findViewById<Button>(R.id.changeButton)            // 保存ボタン
+        val cancelBt = findViewById<Button>(R.id.cancelButton)            // キャンセルボタン
+
+
+        // ２－２．グローバル変数のログインユーザーIDを取得。
+        val loginUserId = MyApplication.getInstance().loginUserId ?: "null or empty"
+        Log.d("チェック", "loginUserId = [$loginUserId]")
+        Log.d("チェック", "MyApplication.loginUserId = [${MyApplication.getInstance().loginUserId}]")
+
+
+
+        /*
+        ２－３．ユーザ情報取得APIをリクエストしてログインユーザのユーザ情報取得処理を行う
+            ２－３－１．正常にレスポンスを受け取った時(コールバック処理)
+                ２－３－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
+
+                ２－３－１－２．取得したデータを各オブジェクトにセットする
+
+            ２－３－２．リクエストが失敗した時(コールバック処理)
+                ２－３－２－１．エラーメッセージをトースト表示する
+         */
+
+        // ２－４．changeButtonのクリックイベントリスナーを作成する
+        changeBt.setOnClickListener {
+            // ２－４－１．ユーザ変更処理APIをリクエストして入力したユーザ情報の更新処理を行う
+            // HTTP接続用インスタンス生成
+            val client = OkHttpClient()
+            // JSON形式でパラメータを送るようなデータ形式を設定
+            val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
+            // Bodyのデータ（APIに渡したいパラメータを設定）
+            val requestBodyJson = JSONObject().apply {
+                put("userId", userId)       // ユーザID
+                put("userName", userName)   // ユーザ名
+//                put("password", password)   // パスワード
+                put("profile", profile)      // プロフィール
+            }
+
+            // BodyのデータをAPIに送る為にRequestBody形式に加工
+            val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
+            // Requestを作成
+            val request = Request.Builder()
+
+                .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/userUpd.php")
+//                .url("http://10.0.2.2/TestAPI/test_php/userUpd.php")
+
+//                .url("http://10.0.2.2/フォルダ名/ファイル名)   //10.0.2.2の後を自分の環境に変更してください
+                .post(requestBody)
+                .build()
+
+            // リクエスト送信（非同期処理）
+            client.newCall(request!!).enqueue(object : Callback {
+                // ２－４－１－１．正常にレスポンスを受け取った時(コールバック処理)
+                override fun onResponse(call: Call, response: Response) {
+
+                    val bodyStr = response.body?.string().orEmpty()
+
+//                    Log.d("APIのれすぽんすじゃ！", bodyStr)
+
+                    runOnUiThread {
+                        if (!response.isSuccessful) {
+                            Toast.makeText(applicationContext, "サーバーエラーが発生しました", Toast.LENGTH_SHORT).show()
+                            return@runOnUiThread
+                        }
+
+                        val json = JSONObject(bodyStr)
+                        val status = json.optString("status", json.optString("result", "error"))
+
+                        // ２－４－１－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
+                        if (status != "success") {
+                            val errMsg = json.optString("error", "登録に失敗しました")
+                            Toast.makeText(applicationContext, errMsg, Toast.LENGTH_SHORT).show()
+                            return@runOnUiThread
+                        }
+
+
+
+
+                        // ２－４－１－１－２．ユーザ情報画面に遷移する
+                        val intent = Intent(this@UserEditActivity, UserInfoActivity::class.java)
+                        intent.putExtra("loginUserId", loginUserId)
+                        startActivity(intent)
+
+                        // ２－４－１－１－３．自分の画面を閉じる
+                        finish()
+                    }
+                }
+
+                // ２－４－１－２．リクエストが失敗した時(コールバック処理)
+                override fun onFailure(call: Call, e: IOException) {
+                    runOnUiThread {
+                        // ２－４－１－２－１．エラーメッセージをトースト表示する
+                        Toast.makeText(
+                            applicationContext,
+                            "リクエストが失敗しました: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            })
+
+
+        }
+
+
+
+        /*
+
+
+
+                　　　　　　　　　　
+
+
+
+
+
+         */
+
+
+
+        // ２－５．cancelButtonのクリックイベントリスナーを作成する
+        cancelBt.setOnClickListener {
+            // ２－５－１．自分の画面を閉じる
+            finish()
+        }
     }
 
     // オーバーフローメニューを選んだ時に共通処理を呼び出す。

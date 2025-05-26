@@ -57,15 +57,26 @@ class UserEditActivity : OverflowMenuActivity() {
         val client = OkHttpClient()
         // JSON形式でパラメータを送るようなデータ形式を設定
         val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
+
+
+
+
         // Bodyのデータ（APIに渡したいパラメータを設定）
         val requestBodyJson = JSONObject().apply {
             put("userId", loginUserId)   // ユーザID
+
+            Log.d("チェック", "userId.text = [${loginUserId}]")
+
+
+
+
         }
         // BodyのデータをAPIに送る為にRequestBody形式に加工
         val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
         // Requestを作成
         val request = Request.Builder()
-            .url("https://dfghjk.fgh.fg.kk/jjj/aaaaa/WhisperSystem/userSel.php")
+            .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/userInfo.php")
+
             .post(requestBody)
             .build()
 
@@ -74,23 +85,36 @@ class UserEditActivity : OverflowMenuActivity() {
             override fun onResponse(call: Call, response: Response) {
                 val bodyStr = response.body?.string().orEmpty()
 
-                runOnUiThread {
-                    val json = JSONObject(bodyStr)
-                    val status = json.optString("status", json.optString("result", "error"))
+                println("APIのれすぽんす(´ぅω・｀)ﾈﾑｲ" + bodyStr)
+                Log.d("送信データ", requestBodyJson.toString())
 
-                    // ２－３－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
+
+
+                runOnUiThread {
+                        val json = JSONObject(bodyStr)
+                        val status = json.optString("status", json.optString("result", "error"))
+
+//                        // ２－３－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
+//                        if (status != "success" ) {
+//                            val errMsg = json.optString("error", "JSONデータエラー")
+//                            Toast.makeText(applicationContext, errMsg, Toast.LENGTH_SHORT).show()
+//                            return@runOnUiThread
+//                        }
+
                     if (status != "success") {
-                        val errMsg = json.optString("error", "ユーザ情報の取得に失敗しました")
-                        Toast.makeText(applicationContext, errMsg, Toast.LENGTH_SHORT).show()
+                        val err = json.optString("error", json.optString("errMsg", "JSONデータエラー"))
+                        Toast.makeText(applicationContext, err, Toast.LENGTH_SHORT).show()
+                        Log.e("API_ERROR", bodyStr)
                         return@runOnUiThread
                     }
 
                     // ２－３－１－２．取得したデータを各オブジェクトにセットする
-                    val dataObj = json.getJSONObject("data")
-                    userId.text = dataObj.optString("userId")
-                    userName.setText(dataObj.optString("userName"))
-                    profile.setText(dataObj.optString("profile"))
-                    // userImage への設定は必要に応じて実装
+                    userId.text = json.optString("userId")
+                    userName.setText(json.optString("userName"))
+                    profile.setText(json.optString("profile"))
+
+
+
                 }
             }
             // ２－３－２．リクエストが失敗した時(コールバック処理)
@@ -99,7 +123,7 @@ class UserEditActivity : OverflowMenuActivity() {
                     // ２－３－２－１．エラーメッセージをトースト表示する
                     Toast.makeText(
                         applicationContext,
-                        "ユーザ情報の取得に失敗しました: ${e.message}",
+                        "リクエスト失敗しました。: ${e.message}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -116,6 +140,11 @@ class UserEditActivity : OverflowMenuActivity() {
             ２－３－２．リクエストが失敗した時(コールバック処理)
                 ２－３－２－１．エラーメッセージをトースト表示する
          */
+
+
+        /*
+
+
 
         // ２－４．changeButtonのクリックイベントリスナーを作成する
         changeBt.setOnClickListener {
@@ -190,6 +219,8 @@ class UserEditActivity : OverflowMenuActivity() {
             })
 
         }
+
+         */
 
         // ２－５．cancelButtonのクリックイベントリスナーを作成する
         cancelBt.setOnClickListener {

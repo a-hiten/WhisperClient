@@ -51,31 +51,24 @@ class UserEditActivity : OverflowMenuActivity() {
         Log.d("チェック", "loginUserId = [$loginUserId]")
         Log.d("チェック", "MyApplication.loginUserId = [${MyApplication.getInstance().loginUserId}]")
 
-
-
         // HTTP接続用インスタンス生成
         val client = OkHttpClient()
         // JSON形式でパラメータを送るようなデータ形式を設定
         val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
-
-
-
 
         // Bodyのデータ（APIに渡したいパラメータを設定）
         val requestBodyJson = JSONObject().apply {
             put("userId", loginUserId)   // ユーザID
 
             Log.d("チェック", "userId.text = [${loginUserId}]")
-
-
-
-
         }
         // BodyのデータをAPIに送る為にRequestBody形式に加工
         val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
         // Requestを作成
         val request = Request.Builder()
             .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/userInfo.php")
+//            .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
+
 
             .post(requestBody)
             .build()
@@ -88,18 +81,9 @@ class UserEditActivity : OverflowMenuActivity() {
                 println("APIのれすぽんす(´ぅω・｀)ﾈﾑｲ" + bodyStr)
                 Log.d("送信データ", requestBodyJson.toString())
 
-
-
                 runOnUiThread {
                         val json = JSONObject(bodyStr)
                         val status = json.optString("status", json.optString("result", "error"))
-
-//                        // ２－３－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
-//                        if (status != "success" ) {
-//                            val errMsg = json.optString("error", "JSONデータエラー")
-//                            Toast.makeText(applicationContext, errMsg, Toast.LENGTH_SHORT).show()
-//                            return@runOnUiThread
-//                        }
 
                     if (status != "success") {
                         val err = json.optString("error", json.optString("errMsg", "JSONデータエラー"))
@@ -112,9 +96,6 @@ class UserEditActivity : OverflowMenuActivity() {
                     userId.text = json.optString("userId")
                     userName.setText(json.optString("userName"))
                     profile.setText(json.optString("profile"))
-
-
-
                 }
             }
             // ２－３－２．リクエストが失敗した時(コールバック処理)

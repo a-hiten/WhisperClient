@@ -19,7 +19,6 @@ open class OverflowMenuActivity : AppCompatActivity() {
         return true
     }
 
-
     // ＊thisだとその画面でしか使えないからactivityに変更した
     //    ２－２．オプションメニューアイテム選択時（onOptionsItemSelected処理）
     companion object {

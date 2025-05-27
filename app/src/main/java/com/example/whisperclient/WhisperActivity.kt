@@ -73,7 +73,6 @@ class WhisperActivity : OverflowMenuActivity() {
 //            println("めっせーじ" + whisperEdit)
 //            Log.d("チェック", "送信先URL = ${MyApplication.getInstance().apiUrl + "whisperInsertAPI.php"}")
 
-
             // ２－３－２．ささやき登録処理APIをリクエストして、入力したささやきの登録処理を行う
             // HTTP接続用インスタンス生成
             val client = OkHttpClient()
@@ -103,7 +102,6 @@ class WhisperActivity : OverflowMenuActivity() {
                 override fun onResponse(call: Call, response: Response) {
 
                     val bodyStr = response.body?.string().orEmpty()
-
 //                    Log.d("APIのれすぽんすじゃ！", bodyStr)
 
                     runOnUiThread {
@@ -121,7 +119,6 @@ class WhisperActivity : OverflowMenuActivity() {
                             Toast.makeText(applicationContext, errMsg, Toast.LENGTH_SHORT).show()
                             return@runOnUiThread
                         }
-
                         // ２－３－２ー１－２．タイムライン画面に遷移する
                         val intent = Intent(this@WhisperActivity, TimelineActivity::class.java)
                         intent.putExtra("loginUserId", loginUserId)

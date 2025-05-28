@@ -135,9 +135,9 @@ class UserEditActivity : OverflowMenuActivity() {
             val request = Request.Builder()
 
                 .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/userInfo.php")
-//            .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
+//                    .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
 
-//                .url("http://10.0.2.2/フォルダ名/ファイル名)   //10.0.2.2の後を自分の環境に変更してください
+
                 .post(requestBody)
                 .build()
 
@@ -204,7 +204,7 @@ class UserEditActivity : OverflowMenuActivity() {
             val updateBody = updateJson.toString().toRequestBody(mediaType)
             val updateRequest = Request.Builder()
                 .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/userChange.php")
-                // .url("http://10.0.2.2/＜ご自身の環境に合わせて変更＞")
+//                    .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
                 .post(updateBody)
                 .build()
 

@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 // ３．アダプター作成（クラス名：WhisperAdapter［引数：MutableList<WhisperRowData>、Context ］）
 // ３－１．RecyclerView.Adapterクラスを継承する。
-class WhisperAdapter(private  val dataset: MutableList<WhisperRowData>,private val context: Context) : RecyclerView.Adapter<WhisperAdapter.ViewHolder>() {
+class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private val context: Context) : RecyclerView.Adapter<WhisperAdapter.ViewHolder>() {
 
     // ３－２．ビューホルダー（内部クラス）
     class ViewHolder(item: View) :RecyclerView.ViewHolder(item){

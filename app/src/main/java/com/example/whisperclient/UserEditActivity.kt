@@ -93,9 +93,9 @@ class UserEditActivity : OverflowMenuActivity() {
                     }
 
                     // ２－３－１－２．取得したデータを各オブジェクトにセットする
-                    userId.text = json.optString("userId")
-                    userName.setText(json.optString("userName"))
-                    profile.setText(json.optString("profile"))
+                        userId.text = json.optString("userId")
+                        userName.setText(json.optString("userName"))
+                        profile.setText(json.optString("profile"))
                 }
             }
 
@@ -112,203 +112,44 @@ class UserEditActivity : OverflowMenuActivity() {
             }
         })
 
-        // ２－４．changeButtonのクリックイベントリスナーを作成する
+        // ２－４－１．ユーザ変更処理APIをリクエストして入力したユーザ情報の更新処理を行う
         changeBt.setOnClickListener {
-
-//            println("めっせーじ" + whisperEdit)
-//            Log.d("チェック", "送信先URL = ${MyApplication.getInstance().apiUrl + "whisperInsertAPI.php"}")
-
-            // ２－３－２．ささやき登録処理APIをリクエストして、入力したささやきの登録処理を行う
-            // HTTP接続用インスタンス生成
-            val client = OkHttpClient()
-            // JSON形式でパラメータを送るようなデータ形式を設定
-            val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
             // Bodyのデータ（APIに渡したいパラメータを設定）
-            val requestBodyJson = JSONObject().apply {
-                put("userId", loginUserId)
-                put("content",profile )
+            val updateBodyJson = JSONObject().apply {
+                put("userId", loginUserId)   // ユーザID
+                put("userName", userName.text.toString())   // ユーザ名
+                put("profile", profile.text.toString())     // プロフィール
             }
+            val updateRequestBody = updateBodyJson
+                .toString()
+                .toRequestBody(mediaType)
 
-            // BodyのデータをAPIに送る為にRequestBody形式に加工
-            val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
-            // Requestを作成
-            val request = Request.Builder()
-
-                .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/userInfo.php")
-//                    .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
-
-
-                .post(requestBody)
-                .build()
-
-            // リクエスト送信（非同期処理）
-            client.newCall(request!!).enqueue(object : Callback {
-                // ２－３－２ー１．正常にレスポンスを受け取った時(コールバック処理)
-                override fun onResponse(call: Call, response: Response) {
-
-                    val bodyStr = response.body?.string().orEmpty()
-//                    Log.d("APIのれすぽんすじゃ！", bodyStr)
-
-                    runOnUiThread {
-                        if (!response.isSuccessful) {
-                            Toast.makeText(
-                                applicationContext,
-                                "サーバーエラーが発生しました",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            return@runOnUiThread
-                        }
-
-                        val json = JSONObject(bodyStr)
-                        val status = json.optString("status", json.optString("result", "error"))
-
-                        // ２－３－２ー１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
-                        if (status != "success") {
-                            val errMsg = json.optString("error", "登録に失敗しました")
-                            Toast.makeText(applicationContext, errMsg, Toast.LENGTH_SHORT).show()
-                            return@runOnUiThread
-                        }
-
-
-                        // ２－４－１－１－２．ユーザ情報画面に遷移する
-                        val intent = Intent(this@UserEditActivity, UserInfoActivity::class.java)
-                        intent.putExtra("loginUserId", loginUserId)
-                        startActivity(intent)
-
-                        // ２－４－１－１－３．自分の画面を閉じる
-                        finish()
-                    }
-                }
-
-                // ２－４－１－２．リクエストが失敗した時(コールバック処理)
-                override fun onFailure(call: Call, e: IOException) {
-                    runOnUiThread {
-                        // ２－４－１－２－１．エラーメッセージをトースト表示する
-                        Toast.makeText(
-                            applicationContext,
-                            "リクエストが失敗しました: ${e.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            })
-        }
-        /* ２－４．changeButtonのクリックイベントリスナーを作成する */
-        changeBt.setOnClickListener {
-            // ２－４－１．ユーザ変更処理APIをリクエストして入力したユーザ情報の更新処理を行う
-            val updateJson = JSONObject().apply {
-                put("userId", loginUserId)                       // ユーザID
-                put("userName", userName.text.toString())        // 変更後のユーザ名
-                put("profile", profile.text.toString())          // 変更後のプロフィール
-            }
-            val updateBody = updateJson.toString().toRequestBody(mediaType)
             val updateRequest = Request.Builder()
-                .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/userChange.php")
-//                    .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
-                .post(updateBody)
-                .build()
+                .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/userUpd.php")
+//            .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
+                        .post(updateRequestBody)
+                        .build()
 
             client.newCall(updateRequest).enqueue(object : Callback {
-                /* ２－４－１－１．正常にレスポンスを受け取った時(コールバック処理) */
-                override fun onResponse(call: Call, response: Response) {
-                    val resStr = response.body?.string().orEmpty()
-                    runOnUiThread {
-                        val resJson = JSONObject(resStr)
-                        val status =
-                            resJson.optString("status", resJson.optString("result", "error"))
 
-                        if (status != "success") {
-                            /* ２－４－１－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる */
-                            val err = resJson.optString(
-                                "error",
-                                resJson.optString("errMsg", "更新に失敗しました")
-                            )
-                            Toast.makeText(applicationContext, err, Toast.LENGTH_SHORT).show()
-                            return@runOnUiThread
-                        }
-
-                        /* ２－４－１－１－２．ユーザ情報画面に遷移する */
-                        val intent = Intent(this@UserEditActivity, UserInfoActivity::class.java)
-                        startActivity(intent)
-
-                        /* ２－４－１－１－３．自分の画面を閉じる */
-                        finish()
-                    }
-                }
-
-                /* ２－４－１－２．リクエストが失敗した時(コールバック処理) */
-                override fun onFailure(call: Call, e: IOException) {
-                    runOnUiThread {
-                        /* ２－４－１－２－１．エラーメッセージをトースト表示する */
-                        Toast.makeText(
-                            applicationContext,
-                            "更新リクエストに失敗しました: ${e.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            })
-        }
-
-
-        // ２－４．changeButtonのクリックイベントリスナーを作成する
-        changeBt.setOnClickListener {
-            // ２－４－１．ユーザ変更処理APIをリクエストして入力したユーザ情報の更新処理を行う
-            // HTTP接続用インスタンス生成
-            val client = OkHttpClient()
-            // JSON形式でパラメータを送るようなデータ形式を設定
-            val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
-            // Bodyのデータ（APIに渡したいパラメータを設定）
-            val requestBodyJson = JSONObject().apply {
-                put("userId", userId)       // ユーザID
-                put("userName", userName)   // ユーザ名
-//                put("password", password)   // パスワード
-                put("profile", profile)      // プロフィール
-            }
-
-            // BodyのデータをAPIに送る為にRequestBody形式に加工
-            val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
-            // Requestを作成
-            val request = Request.Builder()
-
-                .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/userUpd.php")
-//                .url("http://10.0.2.2/TestAPI/test_php/userUpd.php")
-
-//                .url("http://10.0.2.2/フォルダ名/ファイル名)   //10.0.2.2の後を自分の環境に変更してください
-                .post(requestBody)
-                .build()
-
-            // リクエスト送信（非同期処理）
-            client.newCall(request!!).enqueue(object : Callback {
                 // ２－４－１－１．正常にレスポンスを受け取った時(コールバック処理)
                 override fun onResponse(call: Call, response: Response) {
-
                     val bodyStr = response.body?.string().orEmpty()
-//                    Log.d("APIのれすぽんすじゃ！", bodyStr)
 
                     runOnUiThread {
-                        if (!response.isSuccessful) {
-                            Toast.makeText(
-                                applicationContext,
-                                "サーバーエラーが発生しました",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            return@runOnUiThread
-                        }
-
                         val json = JSONObject(bodyStr)
                         val status = json.optString("status", json.optString("result", "error"))
 
                         // ２－４－１－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
                         if (status != "success") {
-                            val errMsg = json.optString("error", "登録に失敗しました")
-                            Toast.makeText(applicationContext, errMsg, Toast.LENGTH_SHORT).show()
+                            val err = json.optString("error", json.optString("errMsg", "JSONデータエラー"))
+                            Toast.makeText(applicationContext, err, Toast.LENGTH_SHORT).show()
+                            Log.e("UPDATE_API_ERROR", bodyStr)
                             return@runOnUiThread
                         }
+
                         // ２－４－１－１－２．ユーザ情報画面に遷移する
-                        val intent = Intent(this@UserEditActivity, UserInfoActivity::class.java)
-                        intent.putExtra("loginUserId", loginUserId)
-                        startActivity(intent)
+                        startActivity(Intent(this@UserEditActivity, UserInfoActivity::class.java))
 
                         // ２－４－１－１－３．自分の画面を閉じる
                         finish()
@@ -321,7 +162,7 @@ class UserEditActivity : OverflowMenuActivity() {
                         // ２－４－１－２－１．エラーメッセージをトースト表示する
                         Toast.makeText(
                             applicationContext,
-                            "リクエストが失敗しました: ${e.message}",
+                            "更新リクエスト失敗しました。: ${e.message}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }

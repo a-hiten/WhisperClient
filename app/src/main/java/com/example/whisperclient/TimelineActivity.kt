@@ -51,7 +51,7 @@ class TimelineActivity : OverflowMenuActivity() {
         val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
         // Bodyのデータ（APIに渡したいパラメータを設定）
         val requestBodyJson = JSONObject().apply {
-            put("loginUserId", loginUserId)
+            put("userId", loginUserId)
         }
         // BodyのデータをAPIに送る為にRequestBody形式に加工
         val requestBody = requestBodyJson.toString().toRequestBody(mediaType)

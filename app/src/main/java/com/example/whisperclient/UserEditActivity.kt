@@ -67,6 +67,7 @@ class UserEditActivity : OverflowMenuActivity() {
         // Requestを作成
         val request = Request.Builder()
             .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/userInfo.php")
+            .url("http://10.0.2.2/TestAPI/test_php/userInfo.php")
 //            .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
 
             .post(requestBody)
@@ -126,6 +127,7 @@ class UserEditActivity : OverflowMenuActivity() {
 
             val updateRequest = Request.Builder()
                 .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/userUpd.php")
+                .url("http://10.0.2.2/TestAPI/test_php/userUpd.php")
 //            .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
                         .post(updateRequestBody)
                         .build()

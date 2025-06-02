@@ -74,6 +74,30 @@ class TimelineActivity : OverflowMenuActivity() {
                     // APIから取得したJSON文字列をJSONオブジェクトに変換
                     val json = JSONObject(body)
                     val status = json.optString("status", json.optString("result", "error"))
+
+                    if (status != "success") {
+                        val errorMsg = json.optString("message", "エラーが発生しました。")
+                        runOnUiThread {
+                            Toast.makeText(applicationContext, errorMsg, Toast.LENGTH_SHORT).show()
+                        }
+                        return
+                    }
+                    // ２－２－３－２．ささやき情報一覧が存在する間、以下の処理を繰り返す
+                    val whisperList = mutableListOf<String>()
+                    val whispers = json.optJSONArray("whispers")
+                    if (whispers != null) {
+                        for (i in 0 until whispers.length()) {
+                            // ２－２－３－２－１．ささやき情報をリストに格納する
+                            val whisper = whispers.getJSONObject(i)
+                            whisperList.add(whisper.toString())
+                        }
+                    }
+                    // ２－２－３－３．timelineRecycleにささやき情報リストをセットする
+                    runOnUiThread {
+                        // adapterは既存のものを使用するか、ダミーでもOK
+//                        recyclerView.adapter = WhisperAdapter(WhisperRowData)
+                    }
+
                 }
             }
 

@@ -7,7 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import okio.IOException
+import org.json.JSONObject
 
 
 // ３．アダプター作成（クラス名：WhisperAdapter［引数：MutableList<WhisperRowData>、Context ］）
@@ -29,7 +40,6 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
             whisper = item.findViewById(R.id.whisperText)
             goodImage = item.findViewById(R.id.goodImage)
         }
-
     }
 
     // ３－３．ビューホルダー生成時（onCreateViewHolder処理）
@@ -73,15 +83,66 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
         holder.goodImage.setOnClickListener {
             // ３－４－４－１．イイね管理処理APIをリクエストして入力した対象行のささやきのイイねの登録・解除を行う
 
-            // ３－４－４－１－１．正常にレスポンスを受け取った時(コールバック処理)
 
-            // ３－４－４－１－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
+            // HTTP接続用インスタンス生成
+            val client = OkHttpClient()
+            // JSON形式でパラメータを送るようデータ形式を設定
+            val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
+            // Bodyのデータ(APIに渡したいパラメータを設定)
+            val requestBodyJson = JSONObject().apply {
+                put("userId", item.userId)
+                put("whisper", item.whisperId)
+                put("goodFlg", item.goodImage)
+
+            }
+            // BodyのデータをAPIに送るためにRequestBody形式に加工
+            val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
+            // Requestを作成(先ほど設定したデータ形式とパラメータ情報をもとにリクエストデータを作成)
+            val request = Request.Builder()
+                .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/goodCtl.php")
+//                .url("http://10.0.2.2/TestAPI/test_php/goodCtl.php")
+//                    .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
+
+                .post(requestBody) // リクエストするパラメータ設定
+                .build()
+            client.newCall(request).enqueue(object : Callback {
+                // ３－４－４－１－１．正常にレスポンスを受け取った時(コールバック処理)
+                override fun onResponse(call: Call, response: Response) {
+                    val bodyStr = response.body?.string().orEmpty()
+                    (context as? android.app.Activity)?.runOnUiThread {
+                        val json = JSONObject(bodyStr)
+                        val status = json.optString("status", json.optString("result", "error"))
+
+                        // ３－４－４－１－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
+                        if (status != "success") {
+                            val errMsg = json.optString("error", "いいねに失敗しました。")
+                            Toast.makeText(context, errMsg, Toast.LENGTH_SHORT)
+                                .show()
+                            return@runOnUiThread
+                        }
+                    }
+                }
+
+                // ３－４－４－１－２．リクエストが失敗した時(コールバック処理)
+                override fun onFailure(call: Call, e: IOException) {
+                    // ３－４－４－１－２－１．エラーメッセージをトースト表示する
+                    (context as? android.app.Activity)?.runOnUiThread{
+                        Toast.makeText(context, "リクエストが失敗しました", Toast.LENGTH_SHORT).show()
+                        return@runOnUiThread
+                    }
+                }
+            })
+
+
+
+
+
 
             // ３－４－４－１－１－２．対象行のいいねのレイアウトを切り替えるため、いいねフラグの変更を通知する。
 
-            // ３－４－４－１－２．リクエストが失敗した時(コールバック処理)
 
-            // ３－４－４－１－２－１．エラーメッセージをトースト表示する
+
+
 
         }
 
@@ -92,7 +153,7 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
     // ３－５．行数取得時（getItemCount処理）
     override fun getItemCount(): Int {
         // ３－５－１．行リストの件数（データセットのサイズ）を戻り値にセットする
-        TODO("Not yet implemented")
+        return dataset.size
     }
 }
 

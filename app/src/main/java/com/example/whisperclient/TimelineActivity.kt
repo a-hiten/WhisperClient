@@ -74,7 +74,8 @@ class TimelineActivity : OverflowMenuActivity() {
                 // ログ
                 println("なかみだよ～"+ body)
 
-                runOnUiThread {                     // APIから取得したJSON文字列をJSONオブジェクトに変換
+                // APIから取得したJSON文字列をJSONオブジェクトに変換
+                runOnUiThread {
                     val json = JSONObject(body)
                     val status = json.optString("status", json.optString("result", "error"))
 
@@ -116,7 +117,7 @@ class TimelineActivity : OverflowMenuActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 // ２－３－２－１．エラーメッセージをトースト表示する
                 runOnUiThread {
-                    Toast.makeText(applicationContext, "通信に失敗しました", Toast.LENGTH_SHORT)
+                    Toast.makeText(applicationContext, "リクエストに失敗しました。", Toast.LENGTH_SHORT)
                         .show()
                 }
             }

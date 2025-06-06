@@ -2,6 +2,7 @@ package com.example.whisperclient
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
@@ -21,6 +22,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import kotlin.text.Typography.section
@@ -42,32 +44,9 @@ class SearchActivity : OverflowMenuActivity() {
         val searchText = findViewById<EditText>(R.id.searchEdit)
         val search = findViewById<Button>(R.id.searchButton)
 
-
-
-
-
-//                    // １－２－３－１ー２．グローバル変数loginUserIdに作成したユーザIDを格納する
-//                    val createdUserId = json.optString("userId", userId)
-//                    MyApplication.getInstance().loginUserId = createdUserId
-//
-//                    // １－２－３－１ー３．タイムライン画面に遷移する
-//                    val intent = Intent(this@SearchActivity, TimelineActivity::class.java)
-//                    intent.putExtra("loginUserId", createdUserId)
-//                    startActivity(intent)
-
-
-
-
-
-
-
-
-
         // ２－２．searchButtonのクリックイベントリスナーを作成する
         search.setOnClickListener {
-
             val searchText = searchText.text.toString()
-
 
             // ２－２－１．入力項目が空白の時、エラーメッセージをトースト表示して処理を終了させる
             if (searchText.isBlank()) {
@@ -80,26 +59,76 @@ class SearchActivity : OverflowMenuActivity() {
                 return@setOnClickListener
             }
 
+            // ２－２－２．ラジオボタンの選択肢を変数に保持する。
+            val section = if (user.isChecked) "1" else "2"
+
+            // ２－２－３．検索結果取得APIをリクエストして検索キーワードに該当する情報取得を行う
+            // HTTP接続用インスタンス生成
+            val client = OkHttpClient()
+            // JSON形式でパラメータを送るようデータ形式を設定
+            val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
+            // Bodyのデータ(APIに渡したいパラメータを設定)
+            val requestBodyJson = JSONObject().apply {
+                put("section",user)
+                put("section", whisper)
+                put("string", searchText)
+            }
+            // BodyのデータをAPIに送る為にRequestBody形式に加工
+            val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
+
+            // Requestを作成
+            val request = Request.Builder()
+                .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/search.php")
+//            .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
+                .post(requestBody)
+                .build()
+
+            // リクエスト送信（非同期処理）
+            client.newCall(request).enqueue(object : Callback {
+                // １－２－２－１．正常にレスポンスを受け取った時(コールバック処理)
+                override fun onResponse(call: Call, response: Response) {
+                    val body = response.body?.string()
+
+                    // ログ
+                    println("なかみだよ～"+ body)
+
+                    runOnUiThread {                     // APIから取得したJSON文字列をJSONオブジェクトに変換
+                        val json = JSONObject(body)
+                        val status = json.optString("status", json.optString("result", "error"))
+
+                        if (status != "success") {
+                            val errorMsg = json.optString("error", "エラーが発生しました。")
+                            runOnUiThread {
+                                Toast.makeText(applicationContext, errorMsg, Toast.LENGTH_SHORT).show()
+                                return@runOnUiThread
+                            }
+                        }
+                        // ログ
+//                        Log.d("Timeline", "loginUserId = $loginUserId")
+//                        Log.d("Timeline", "whispers length = ${whispers.length()}")
+
+                    }
+                }
+
+
+                // ２－２－４．リクエストが失敗した時(コールバック処理)
+                override fun onFailure(call: Call, e: IOException) {
+                    // ２－２－４－１．エラーメッセージをトースト表示する
+                    runOnUiThread {
+                        Toast.makeText(applicationContext, "リクエストに失敗しました。", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            })
+
 
 /*
 
-    // ２－２－２．ラジオボタンの選択肢を変数に保持する。
-    val section = if (user.isChecked) "1" else "2"
 
 
 
 
-    // HTTP接続用インスタンス生成
-    val client = OkHttpClient()
-    // JSON形式でパラメータを送るようデータ形式を設定
-    val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
-    // Bodyのデータ(APIに渡したいパラメータを設定)
-    val requestBodyJson = JSONObject().apply {
-        put("section",user)
-        put("section", whisper)
-        put("string", searchText)
 
-    }
     // BodyのデータをAPIに送るためにRequestBody形式に加工
     val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
     // Requestを作成(先ほど設定したデータ形式とパラメータ情報をもとにリクエストデータを作成)

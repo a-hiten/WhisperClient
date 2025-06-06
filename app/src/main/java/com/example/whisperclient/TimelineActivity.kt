@@ -72,7 +72,7 @@ class TimelineActivity : OverflowMenuActivity() {
                 val body = response.body?.string()
 
                 // ログ
-                Log.d("Timeline", "API response body = $body")
+                println("なかみだよ～"+ body)
 
                 runOnUiThread {                     // APIから取得したJSON文字列をJSONオブジェクトに変換
                     val json = JSONObject(body)
@@ -100,15 +100,13 @@ class TimelineActivity : OverflowMenuActivity() {
                         val data = WhisperRowData(
                             userId = 0,
                             userName = obj.optString("userName"),
-                            whisperId = obj.optInt("whisperId"),
-                            whisperText = obj.optString("whisperText"),
+                            whisperId = obj.optInt("whisperNo"),
+                            whisperText = obj.optString("content"),
                             userImage = "",
                             goodImage = obj.optBoolean("goodFlg")
                         )
                         whisperList.add(data)
                     }
-
-//                    recyclerView.layoutManager = LinearLayoutManager(this@TimelineActivity)
 
                     recyclerView.adapter = WhisperAdapter(whisperList, applicationContext)
                 }

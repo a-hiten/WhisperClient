@@ -2,6 +2,7 @@ package com.example.whisperclient
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,6 +61,7 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
         // ３－４－１．ビューホルダーのオブジェクトに対象行のデータ（ユーザ名、ささやき）をセットする
         holder.userName.text = dataset[position].userName
         holder.whisper.text = dataset[position].whisperText
+        Log.d("aa",holder.whisper.text.toString())
 
         // ３－４－２．イイねフラグに併せて、いいね画像を切り替える。
 //        holder.goodImage.setImageResource(

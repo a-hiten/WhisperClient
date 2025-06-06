@@ -11,7 +11,6 @@ data class WhisperRowData(
     val userImage: String,      // アイコンの画像パス
     val goodImage: Boolean,       // いいねフラグ
 
-
 )
 
 

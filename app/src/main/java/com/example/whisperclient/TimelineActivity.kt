@@ -1,6 +1,7 @@
 package com.example.whisperclient
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.EditText
@@ -19,6 +20,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 
@@ -37,12 +39,12 @@ class TimelineActivity : OverflowMenuActivity() {
         }
 
         // ２－１．画面デザインで定義したオブジェクトを変数として宣言する。
-        val recyclerView = findViewById<RecyclerView>(R.id.timelineRecycle)      // listの内容はささやき行情報を参照
+        val recyclerView =
+            findViewById<RecyclerView>(R.id.timelineRecycle)      // listの内容はささやき行情報を参照してる
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // ２－２．グローバル変数のログインユーザーIDを取得。
         val loginUserId = MyApplication.getInstance().loginUserId
-
 
         // １－２－２．ログイン認証APIをリクエストして入力ユーザのログイン認証を行う
         // HTTP接続用インスタンス生成
@@ -55,8 +57,8 @@ class TimelineActivity : OverflowMenuActivity() {
         }
         // BodyのデータをAPIに送る為にRequestBody形式に加工
         val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
-        // Requestを作成
 
+        // Requestを作成
         val request = Request.Builder()
             .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/timelineInfo.php")
 //            .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
@@ -68,51 +70,64 @@ class TimelineActivity : OverflowMenuActivity() {
             // １－２－２－１．正常にレスポンスを受け取った時(コールバック処理)
             override fun onResponse(call: Call, response: Response) {
                 val body = response.body?.string()
-                println("レスポンスを受診しました: $body")
-                
-                if (response.isSuccessful && body != null) {
-                    // APIから取得したJSON文字列をJSONオブジェクトに変換
+
+                // ログ
+                Log.d("Timeline", "API response body = $body")
+
+                runOnUiThread {                     // APIから取得したJSON文字列をJSONオブジェクトに変換
                     val json = JSONObject(body)
                     val status = json.optString("status", json.optString("result", "error"))
 
                     if (status != "success") {
-                        val errorMsg = json.optString("message", "エラーが発生しました。")
+                        val errorMsg = json.optString("error", "エラーが発生しました。")
                         runOnUiThread {
                             Toast.makeText(applicationContext, errorMsg, Toast.LENGTH_SHORT).show()
+                            return@runOnUiThread
                         }
-                        return
-                    }
-                    // ２－２－３－２．ささやき情報一覧が存在する間、以下の処理を繰り返す
-                    val whisperList = mutableListOf<String>()
-                    val whispers = json.optJSONArray("whispers")
-                    if (whispers != null) {
-                        for (i in 0 until whispers.length()) {
-                            // ２－２－３－２－１．ささやき情報をリストに格納する
-                            val whisper = whispers.getJSONObject(i)
-                            whisperList.add(whisper.toString())
-                        }
-                    }
-                    // ２－２－３－３．timelineRecycleにささやき情報リストをセットする
-                    runOnUiThread {
-                        // adapterは既存のものを使用するか、ダミーでもOK
-//                        recyclerView.adapter = WhisperAdapter(WhisperRowData)
                     }
 
+                    val whisperList = mutableListOf<WhisperRowData>()
+                    val whispers = json.optJSONArray("whisperList") ?: JSONArray()
+
+
+                    // ログ
+                    Log.d("Timeline", "loginUserId = $loginUserId")
+                    Log.d("Timeline", "whispers length = ${whispers.length()}")
+
+
+                    for (i in 0 until whispers.length()) {
+                        val obj = whispers.getJSONObject(i)
+                        val data = WhisperRowData(
+                            userId = 0,
+                            userName = obj.optString("userName"),
+                            whisperId = obj.optInt("whisperId"),
+                            whisperText = obj.optString("whisperText"),
+                            userImage = "",
+                            goodImage = obj.optBoolean("goodFlg")
+                        )
+                        whisperList.add(data)
+                    }
+
+//                    recyclerView.layoutManager = LinearLayoutManager(this@TimelineActivity)
+
+                    recyclerView.adapter = WhisperAdapter(whisperList, applicationContext)
                 }
             }
 
+
             override fun onFailure(call: Call, e: IOException) {
+                // ２－３－２－１．エラーメッセージをトースト表示する
                 runOnUiThread {
-                    // １－２－３－２ー１．エラーメッセージをトースト表示する
-                    Toast.makeText(
-                        applicationContext,
-                        "リクエストが失敗しました: ${e.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(applicationContext, "通信に失敗しました", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         })
     }
+
+
+
+
     // オーバーフローメニューを選んだ時に共通処理を呼び出す。
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return OverflowMenuActivity.handleMenuItemSelected(this,item) || super.onOptionsItemSelected(item)

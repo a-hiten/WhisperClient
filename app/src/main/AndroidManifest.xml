@@ -28,6 +28,7 @@
             android:exported="false" />
         <activity
             android:name=".SearchActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".OverflowMenuActivity"

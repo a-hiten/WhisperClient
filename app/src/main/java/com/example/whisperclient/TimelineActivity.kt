@@ -90,11 +90,9 @@ class TimelineActivity : OverflowMenuActivity() {
                     val whisperList = mutableListOf<WhisperRowData>()
                     val whispers = json.optJSONArray("whisperList") ?: JSONArray()
 
-
                     // ログ
                     Log.d("Timeline", "loginUserId = $loginUserId")
                     Log.d("Timeline", "whispers length = ${whispers.length()}")
-
 
                     for (i in 0 until whispers.length()) {
                         val obj = whispers.getJSONObject(i)

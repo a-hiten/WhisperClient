@@ -66,10 +66,7 @@ class UserEditActivity : OverflowMenuActivity() {
         val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
         // Requestを作成
         val request = Request.Builder()
-            .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/userInfo.php")
-//            .url("http://10.0.2.2/TestAPI/test_php/userInfo.php")
-//            .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
-
+            .url(MyApplication.getInstance().apiUrl + "userInfo.php")
             .post(requestBody)
             .build()
 
@@ -126,11 +123,9 @@ class UserEditActivity : OverflowMenuActivity() {
                 .toRequestBody(mediaType)
 
             val updateRequest = Request.Builder()
-                .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/userUpd.php")
-//                .url("http://10.0.2.2/TestAPI/test_php/userUpd.php")
-//            .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
-                        .post(updateRequestBody)
-                        .build()
+                .url(MyApplication.getInstance().apiUrl + "userUpd.php")
+                .post(updateRequestBody)
+                .build()
 
             client.newCall(updateRequest).enqueue(object : Callback {
 

@@ -101,10 +101,7 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
             val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
             // Requestを作成(先ほど設定したデータ形式とパラメータ情報をもとにリクエストデータを作成)
             val request = Request.Builder()
-                .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/goodCtl.php")
-//                .url("http://10.0.2.2/TestAPI/test_php/goodCtl.php")
-//                    .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
-
+                .url(MyApplication.getInstance().apiUrl + "goodCtl.php")
                 .post(requestBody) // リクエストするパラメータ設定
                 .build()
             client.newCall(request).enqueue(object : Callback {

@@ -88,11 +88,7 @@ class WhisperActivity : OverflowMenuActivity() {
             val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
             // Requestを作成
             val request = Request.Builder()
-
-                .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/whisperAdd.php")
-//                .url("http://10.0.2.2/TestAPI/test_php/whisperAdd.php")
-//                .url("http://10.0.2.2/フォルダ名/ファイル名)   //10.0.2.2の後を自分の環境に変更してください
-
+                .url(MyApplication.getInstance().apiUrl + "whisperAdd.php")
                 .post(requestBody)
                 .build()
 

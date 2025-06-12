@@ -78,8 +78,7 @@ class SearchActivity : OverflowMenuActivity() {
 
             // Requestを作成
             val request = Request.Builder()
-                .url("https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/search.php")
-//            .url("http://10.0.2.2/自分の環境に合わせる")   //10.0.2.2の後を自分の環境に変更してください
+                .url(MyApplication.getInstance().apiUrl + "search.php")
                 .post(requestBody)
                 .build()
 
@@ -186,44 +185,3 @@ class SearchActivity : OverflowMenuActivity() {
         return OverflowMenuActivity.handleMenuItemSelected(this,item) || super.onOptionsItemSelected(item)
     }
 }
-
-
-
-/*
-１．OverFlowMenuActivityクラスを継承する
-
-２．画面生成時（onCreate処理）
-	２－１．画面デザインで定義したオブジェクトを変数として宣言する。
-
-	２－２．searchButtonのクリックイベントリスナーを作成する
-		２－２－１．入力項目が空白の時、エラーメッセージをトースト表示して処理を終了させる
-						メッセージ内容：検索内容を入力してください
-
-		２－２－２．ラジオボタンの選択肢を変数に保持する。
-
-		２－２－３．検索結果取得APIをリクエストして検索キーワードに該当する情報取得を行う
-			２－２－３－１．正常にレスポンスを受け取った時(コールバック処理)
-				２－２－３－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
-
-				２－２－３－１－２．ラジオボタンの選択肢に合わせて、以下の処理を繰り返すアダプターにリストをセットする
-					２－２－３－１－２－１．ラジオボタンがuserRadioを選択している時
-						２－２－３－１－２－１－１．ユーザ行情報一覧が存在する間、以下の処理を繰り返す
-
-
-						２－２－３－１－２－１－２．ユーザ行情報のアダプターにユーザ情報リストをセットする
-
-						２－２－３－１－２－１－３．searchRecycleを表示する
-			　　　　　　　　　
-					２－２－３－１－２－２．ラジオボタンがwhisperRadioを選択している時
-						２－２－３－１－２－２－１．いいね行情報一覧が存在する間、以下の処理を繰り返す
-
-
-						２－２－３－１－２－２－２．いいね行情報のアダプターにいいね情報リストをセットする
-
-						２－２－３－１－２－２－３．searchRecycleを表示する
-
-
-		２－２－４．リクエストが失敗した時(コールバック処理)
-			２－２－４－１．エラーメッセージをトースト表示する
-
- */

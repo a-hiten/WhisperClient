@@ -156,22 +156,3 @@ class FollowListActivity : OverflowMenuActivity() {
         return OverflowMenuActivity.handleMenuItemSelected(this,item) || super.onOptionsItemSelected(item)
     }
 }
-            /*
-
-
-				２－４－２ー２－１．フォロー情報が存在する場合、以下の処理を繰り返す
-					２－４－２ー２－１－１．フォロー情報をリストに格納する
-
-			２－４－２ー３．フォロワー情報一覧が存在するかチェックする
-				２－４－２ー３－１．フォロワー情報が存在する場合、以下の処理を繰り返す
-					２－４－２ー３－１－１．フォロワー情報をリストに格納する
-
-			２－４－２－４．followRecycleにフォロー情報リストまたはフォロワー情報リストをセットする
-				２－４－２－４ー１．区分がフォローの場合、フォロー情報リストセットする
-
-				２－４－２－４ー２．区分がフォロワーの場合、フォロワー情報リストセットする
-
-
-
-             */
-

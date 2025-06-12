@@ -116,8 +116,8 @@ class SearchActivity : OverflowMenuActivity() {
                                 val user = UserRowData(
                                     userId = obj.optString("userId"),
                                     userName = obj.optString("userName"),
-                                    Follow = obj.optInt("whisperCount"),
-                                    Follower = obj.optInt("followCount"),
+                                    Follow = obj.optInt("followCount"),
+                                    Follower = obj.optInt("followerCount"),
                                     userImage = obj.optString("userImage")
                                 )
                                 users.add(user)

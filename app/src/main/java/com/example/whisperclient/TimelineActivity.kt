@@ -39,8 +39,7 @@ class TimelineActivity : OverflowMenuActivity() {
         }
 
         // ２－１．画面デザインで定義したオブジェクトを変数として宣言する。
-        val recyclerView =
-            findViewById<RecyclerView>(R.id.timelineRecycle)      // listの内容はささやき行情報を参照してる
+        val recyclerView = findViewById<RecyclerView>(R.id.timelineRecycle)      // listの内容はささやき行情報を参照してる
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         // ２－２．グローバル変数のログインユーザーIDを取得。

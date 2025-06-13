@@ -6,18 +6,25 @@ import android.view.MenuItem
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import org.json.JSONArray
 import org.json.JSONObject
+import java.io.IOException
+import kotlin.text.Typography.section
 
 // オーバーフローメニューを継承をする
 class UserInfoActivity : OverflowMenuActivity() {
@@ -56,6 +63,83 @@ class UserInfoActivity : OverflowMenuActivity() {
             .url(MyApplication.getInstance().apiUrl + "userWhisperInfo.php")
             .post(requestBody)
             .build()
+
+        // リクエスト送信（非同期処理）
+        client.newCall(request).enqueue(object : Callback {
+            // ２－４－１．正常にレスポンスを受け取った時(コールバック処理)
+            // １－２－２－１．正常にレスポンスを受け取った時(コールバック処理)
+            override fun onResponse(call: Call, response: Response) {
+                val body = response.body?.string()
+                // ログ
+                println("なかみだよ～" + body)
+
+                // APIから取得したJSON文字列をJSONオブジェクトに変換
+                runOnUiThread {
+                    val json = JSONObject(body)
+                    val status = json.optString("status", json.optString("result", "error"))
+
+                    // ２－４－２－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
+                    if (status != "success") {
+                        val errorMsg = json.optString("error", "エラーが発生しました。")
+                        runOnUiThread {
+                            Toast.makeText(applicationContext, errorMsg, Toast.LENGTH_SHORT).show()
+                            return@runOnUiThread
+                        }
+                    }
+
+                    // ２－４－２ー２．フォロー情報一覧が存在するかチェックする
+                    val followList = mutableListOf<UserRowData>()
+                    val followArray = json.optJSONArray("followList") ?: JSONArray()
+                    if (followArray.length() > 0) {
+                        // ２－４－２ー２－１．フォロー情報が存在する場合、以下の処理を繰り返す
+                        for (i in 0 until followArray.length()) {
+                            val obj = followArray.getJSONObject(i)
+                            // ２－４－２ー２－１－１．フォロー情報をリストに格納する
+                            val data = UserRowData(
+                                userId = obj.optString("userId"),
+                                userName = obj.optString("userName"),
+                                Follow = obj.optInt("followCount"),
+                                Follower = obj.optInt("followerCount"),
+                                userImage = obj.optString("userImage")
+                            )
+                            followList.add(data)
+                        }
+                    }
+                    // ２－４－２ー３．フォロワー情報一覧が存在するかチェックする
+                    val followerList = mutableListOf<UserRowData>()
+                    val followerArray = json.optJSONArray("followerList") ?: JSONArray()
+                    if (followerArray.length() > 0) {
+                        // ２－４－２ー３－１．フォロワー情報が存在する場合、以下の処理を繰り返す
+                        for (i in 0 until followerArray.length()) {
+                            val obj = followerArray.getJSONObject(i)
+                            // ２－４－２ー３－１－１．フォロワー情報をリストに格納する
+                            val data = UserRowData(
+                                userId = obj.optString("userId"),
+                                userName = obj.optString("userName"),
+                                Follow = obj.optInt("followCount"),
+                                Follower = obj.optInt("followerCount"),
+                                userImage = obj.optString("userImage")
+                            )
+                            followerList.add(data)
+                        }
+                    }
+                }
+            }
+            // ２－４－２．リクエストが失敗した時(コールバック処理)
+            override fun onFailure(call: Call, e: IOException) {
+                // ２－４－２－１．エラーメッセージをトースト表示する
+                runOnUiThread {
+                    Toast.makeText(
+                        applicationContext,
+                        "リクエストに失敗しました。",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+            }
+        })
+
+
 
 
         /*

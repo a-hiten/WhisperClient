@@ -1,10 +1,15 @@
 package com.example.whisperclient
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -38,12 +43,25 @@ class UserInfoActivity : OverflowMenuActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        println("ユーザ情報画面")
+        Log.d("チェック", "MyApplication.loginUserId = [${MyApplication.getInstance()}]")
+        Log.d("チェック", "MyApplication.loginUserId = [${MyApplication.getInstance().loginUserId}]")
+
         // ２－１．画面デザインで定義したオブジェクトを変数として宣言する
+        val userImage = findViewById<ImageView>(R.id.userImage)
+        val userName = findViewById<TextView>(R.id.userNameText)
+        val profile = findViewById<TextView>(R.id.profileText)
+        val follow = findViewById<TextView>(R.id.followText)
+        val follower = findViewById<TextView>(R.id.followerText)
+        val fwrnt = findViewById<TextView>(R.id.followCntText)
+        val fwrcnt = findViewById<TextView>(R.id.followerCntText)
+        val whisper = findViewById<RadioButton>(R.id.whisperRadio)
+        val good = findViewById<RadioButton>(R.id.goodInfoRadio)
+
         val recyclerView = findViewById<RecyclerView>(R.id.userRecycle)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // ２－２．インテント(前画面)から対象ユーザIDを取得する
-        val userId = intent.getStringExtra("userId")
+
 
         // ２－３．ユーザささやき情報取得API　共通実行メソッドを呼び出す
         // HTTP接続用インスタンス生成
@@ -52,9 +70,12 @@ class UserInfoActivity : OverflowMenuActivity() {
         val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
         // Bodyのデータ（APIに渡したいパラメータを設定）
         val requestBodyJson = JSONObject().apply {
-            put("userId", userId)
-            put("loginUserId", userId)
+//            put("userId", userId)
+//            put("loginUserId", loginUserId)
         }
+        println("requestBodyJsonのやつ" + requestBodyJson)
+
+
         // BodyのデータをAPIに送る為にRequestBody形式に加工
         val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
 
@@ -66,8 +87,6 @@ class UserInfoActivity : OverflowMenuActivity() {
 
         // リクエスト送信（非同期処理）
         client.newCall(request).enqueue(object : Callback {
-            // ２－４－１．正常にレスポンスを受け取った時(コールバック処理)
-            // １－２－２－１．正常にレスポンスを受け取った時(コールバック処理)
             override fun onResponse(call: Call, response: Response) {
                 val body = response.body?.string()
                 // ログ
@@ -87,44 +106,9 @@ class UserInfoActivity : OverflowMenuActivity() {
                         }
                     }
 
-                    // ２－４－２ー２．フォロー情報一覧が存在するかチェックする
-                    val followList = mutableListOf<UserRowData>()
-                    val followArray = json.optJSONArray("followList") ?: JSONArray()
-                    if (followArray.length() > 0) {
-                        // ２－４－２ー２－１．フォロー情報が存在する場合、以下の処理を繰り返す
-                        for (i in 0 until followArray.length()) {
-                            val obj = followArray.getJSONObject(i)
-                            // ２－４－２ー２－１－１．フォロー情報をリストに格納する
-                            val data = UserRowData(
-                                userId = obj.optString("userId"),
-                                userName = obj.optString("userName"),
-                                Follow = obj.optInt("followCount"),
-                                Follower = obj.optInt("followerCount"),
-                                userImage = obj.optString("userImage")
-                            )
-                            followList.add(data)
-                        }
-                    }
-                    // ２－４－２ー３．フォロワー情報一覧が存在するかチェックする
-                    val followerList = mutableListOf<UserRowData>()
-                    val followerArray = json.optJSONArray("followerList") ?: JSONArray()
-                    if (followerArray.length() > 0) {
-                        // ２－４－２ー３－１．フォロワー情報が存在する場合、以下の処理を繰り返す
-                        for (i in 0 until followerArray.length()) {
-                            val obj = followerArray.getJSONObject(i)
-                            // ２－４－２ー３－１－１．フォロワー情報をリストに格納する
-                            val data = UserRowData(
-                                userId = obj.optString("userId"),
-                                userName = obj.optString("userName"),
-                                Follow = obj.optInt("followCount"),
-                                Follower = obj.optInt("followerCount"),
-                                userImage = obj.optString("userImage")
-                            )
-                            followerList.add(data)
-                        }
-                    }
                 }
             }
+
             // ２－４－２．リクエストが失敗した時(コールバック処理)
             override fun onFailure(call: Call, e: IOException) {
                 // ２－４－２－１．エラーメッセージをトースト表示する
@@ -138,43 +122,6 @@ class UserInfoActivity : OverflowMenuActivity() {
                 }
             }
         })
-
-
-
-
-        /*
-
-
-
-
-
-
-２－４．radioGroupのチェック変更イベントリスナーを作成する
-	２－４－１．ユーザささやき情報取得API　共通実行メソッドを呼び出してラジオボタンにあった情報を取得する
-
-２－５．followCntTextのクリックイベントリスナーを作成する
-	２－５－１．インテントに対象ユーザIDと文字列followをセットする
-
-	２－５－２．フォロー一覧画面に遷移する
-
-２－６．followerCntTextのクリックイベントリスナーを作成する
-	２－６－１．インテントに対象ユーザIDと文字列followerをセットする
-
-	２－６－２．フォロー一覧画面に遷移する
-
-２－７．followButtonのクリックイベントリスナーを作成する
-	２－７－１．未フォローの場合
-		２－７－１－１．フォロー管理処理API　共通実行メソッドを呼び出してフォロー登録を行う。
-
-		２－７－１－２．followButtonの文言をフォロー済みの内容に変更する。
-
-	２－７－２．フォロー済みの場合
-		２－７－２－１．フォロー管理処理API　共通実行メソッドを呼び出してフォロー解除を行う。
-
-		２－７－２－２．followButtonの文言を未フォローの内容に変更する。
-
-         */
-
     }
 
 

@@ -145,7 +145,7 @@ class UserInfoActivity : OverflowMenuActivity() {
     }
 
 
-        private var currentDisplayUserId: String = ""
+    private var currentDisplayUserId: String = ""
 
     // ３．ユーザささやき情報取得API　共通実行メソッド
     private fun getUserWhisperInfo(

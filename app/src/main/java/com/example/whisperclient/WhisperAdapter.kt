@@ -26,6 +26,8 @@ import org.json.JSONObject
 // ３－１．RecyclerView.Adapterクラスを継承する。
 class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private val context: Context) : RecyclerView.Adapter<WhisperAdapter.ViewHolder>() {
 
+
+
     // ３－２．ビューホルダー（内部クラス）
     class ViewHolder(item: View) :RecyclerView.ViewHolder(item){
 
@@ -131,24 +133,10 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
                     }
                 }
             })
-
-
-
-
-
-
             // ３－４－４－１－１－２．対象行のいいねのレイアウトを切り替えるため、いいねフラグの変更を通知する。
 
-
-
-
-
         }
-
-
     }
-
-
     // ３－５．行数取得時（getItemCount処理）
     override fun getItemCount(): Int {
         // ３－５－１．行リストの件数（データセットのサイズ）を戻り値にセットする

@@ -105,7 +105,6 @@ class SearchActivity : OverflowMenuActivity() {
                         // ２－２－３－１－２．ラジオボタンの選択肢に合わせて、以下の処理を繰り返すアダプターにリストをセットする
                         if (section == "1") {
                             // ２－２－３－１－２－１．ラジオボタンがuserRadioを選択している時
-//                            val userList = json.optJSONArray("usersList") ?: JSONArray()
                             val userList = json.optJSONArray("userList") ?: JSONArray()
                             // ２－２－３－１－２－１－１．ユーザ行情報一覧が存在する間、以下の処理を繰り返す
                             val users = mutableListOf<UserRowData>()
@@ -134,32 +133,31 @@ class SearchActivity : OverflowMenuActivity() {
 
                         } else {
                             // ２－２－３－１－２－２．ラジオボタンがwhisperRadioを選択している時
-                            val whisperList = json.optJSONArray("whisperList") ?: JSONArray()
+                            val goodList = json.optJSONArray("whisperList") ?: JSONArray()
 
                             // ２－２－３－１－２－２－１．いいね行情報一覧が存在する間、以下の処理を繰り返す
-                            val whispers = mutableListOf<WhisperRowData>()
+                            val goods = mutableListOf<GoodRowData>()
 
-                            for (i in 0 until whisperList.length()) {
-                                val whisperJson = whisperList.getJSONObject(i)
-                                val whisper = WhisperRowData(
-                                    userId = whisperJson.optInt("userId"),
-                                    userName = whisperJson.optString("userName"),
-                                    whisperId = whisperJson.optInt("whisperId"),
-                                    whisperText = whisperJson.optString("content"),
-                                    userImage = whisperJson.optString("userImage"),
-                                    goodImage = whisperJson.optBoolean("goodImage")
+                            for (i in 0 until goodList.length()) {
+                                val goodJson = goodList.getJSONObject(i)
+                                val good = GoodRowData(
+                                    userId = goodJson.optString("userId"),
+                                    userName = goodJson.optString("userName"),
+                                    whisper = goodJson.optString("content"),
+                                    gcnt = goodJson.optInt("gcnt"),
+                                    userImage = goodJson.optString("userImage")
                                 )
-                                whispers.add(whisper)
+                                goods.add(good)
                             }
                             Log.d("全体内容", json.toString())
-                            Log.d("DEBUG_USER", "ユーザー数: ${whisper.text}")
+                            Log.d("DEBUG_USER", "ユーザー数: ${goods.size}")
 
                             // ２－２－３－１－２－２－２．いいね行情報のアダプターにいいね情報リストをセットする
                             val recyclerView = findViewById<RecyclerView>(R.id.searchRecycle)
 
                             // ２－２－３－１－２－２－３．searchRecycleを表示する
                             recyclerView.layoutManager = LinearLayoutManager(this@SearchActivity)
-                            recyclerView.adapter = WhisperAdapter(whispers, this@SearchActivity)
+                            recyclerView.adapter = GoodAdapter(goods, this@SearchActivity)
                         }
                     }
                 }

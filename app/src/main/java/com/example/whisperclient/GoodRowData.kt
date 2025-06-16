@@ -8,3 +8,4 @@ data class GoodRowData(
     val userImage: String,  // 画像
 
 )
+

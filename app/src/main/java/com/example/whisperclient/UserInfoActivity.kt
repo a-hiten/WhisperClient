@@ -38,8 +38,8 @@ class UserInfoActivity : OverflowMenuActivity() {
 
     // リストを保持する用
     private var currentDisplayUserId: String = ""
-    private val whisperList = mutableListOf<JSONObject>()
-    private val goodList = mutableListOf<JSONObject>()
+    private val goodList = mutableListOf<GoodRowData>()
+    private val whisperList = mutableListOf<WhisperRowData>()
 
     // ２．画面生成時（onCreate処理）
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +51,7 @@ class UserInfoActivity : OverflowMenuActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         println("ユーザ情報画面")
         Log.d("チェック", "MyApplication.loginUserId = [${MyApplication.getInstance()}]")
         Log.d("チェック", "MyApplication.loginUserId = [${MyApplication.getInstance().loginUserId}]")
@@ -68,6 +69,8 @@ class UserInfoActivity : OverflowMenuActivity() {
 
         val recyclerView = findViewById<RecyclerView>(R.id.userRecycle)
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+//        whisper.isChecked = true
 
         // ２－２．インテント(前画面)から対象ユーザIDを取得する
         val intentUserId = intent.getStringExtra("userId")
@@ -206,12 +209,12 @@ class UserInfoActivity : OverflowMenuActivity() {
             .post(requestBody)
             .build()
 
-        /*
+
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
                 val body = response.body?.string()
-//                println("なかみだよ～$body")
+                println("なかみだよ～$body")
 
                 runOnUiThread {
                     val json = JSONObject(body)
@@ -224,19 +227,48 @@ class UserInfoActivity : OverflowMenuActivity() {
                         return@runOnUiThread
                     }
 
-                    // ３－３－１－２．ささやき情報取得
-                    whisperList.clear()
-                    json.optJSONArray("whispers")?.let { arr ->
-                        for (i in 0 until arr.length()) {
-                            whisperList.add(arr.getJSONObject(i))
+
+                    // onCreate内などに書く
+                    val radioGroup = findViewById<RadioGroup>(R.id.radioGroup)
+                    radioGroup.setOnCheckedChangeListener { _, checkedId ->
+                        // 例えば、チェックに応じて処理を分けたい場合
+                        when (checkedId) {
+                            R.id.whisperRadio -> {
+                                Log.d("RadioGroup", "a")
+                                recyclerView.adapter = WhisperAdapter(whisperList, this@UserInfoActivity)
+                                recyclerView.adapter?.notifyDataSetChanged()
+
+                                // ささやきラジオボタンが選択された時の処理
+                            }
+                            R.id.goodInfoRadio -> {
+                                Log.d("RadioGroup", "b")
+                                recyclerView.adapter = GoodAdapter(goodList, this@UserInfoActivity)
+                                recyclerView.adapter?.notifyDataSetChanged()
+                                // いいねラジオボタンが選択された時の処理
+                            }
                         }
                     }
+
+
+
+                    // ３－３－１－２．ささやき情報取得
+
 
                     // ３－３－１－３．イイね情報取得
                     goodList.clear()
                     json.optJSONArray("goods")?.let { arr ->
                         for (i in 0 until arr.length()) {
-                            goodList.add(arr.getJSONObject(i))
+                            val obj = arr.getJSONObject(i)
+
+                            val data = GoodRowData(
+                                userId = obj.optString("userId"),
+                                userName = obj.optString("userName"),
+                                whisper = obj.optString("content"),
+                                gcnt = obj.optInt("goodCount"),
+                                userImage = obj.optString("userImage")
+                            )
+
+                            goodList.add(data)
                         }
                     }
 
@@ -257,22 +289,12 @@ class UserInfoActivity : OverflowMenuActivity() {
                     }
 
                     // ３－３－６．選択されたラジオボタンにあったリストを設定
-                    val followCount = json.optInt("followCount")
-                    val followerCount = json.optInt("followerCount")
-                    val userId = json.optString("userId")
-                    val userName = json.optString("userName")
-                    val userImage = json.optString("userImage")
+                    if (whisper.isChecked) {
+                        recyclerView.adapter = WhisperAdapter(whisperList, this@UserInfoActivity)
+                    } else if (good.isChecked) {
+                        recyclerView.adapter = GoodAdapter(goodList, this@UserInfoActivity)
+                    }
 
-                    val users = listOf(
-                        UserRowData(
-                            userId = userId,
-                            userName = userName,
-                            Follow = followCount,
-                            Follower = followerCount,
-                            userImage = userImage
-                        )
-                    )
-                    recyclerView.adapter = UserAdapter(users.toMutableList(), this@UserInfoActivity)
                 }
             }
 
@@ -285,7 +307,7 @@ class UserInfoActivity : OverflowMenuActivity() {
             }
         })
 
-        */
+
     }
         // ４．フォロー管理処理API　共通実行メソッド
         private fun postFollowManagement(followUserId: String, followFlg: Boolean) {

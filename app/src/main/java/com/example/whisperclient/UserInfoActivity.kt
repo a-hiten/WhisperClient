@@ -37,6 +37,7 @@ import kotlin.text.Typography.section
 class UserInfoActivity : OverflowMenuActivity() {
 
     // リストを保持する用
+    private var currentDisplayUserId: String = ""
     private val whisperList = mutableListOf<JSONObject>()
     private val goodList = mutableListOf<JSONObject>()
 
@@ -52,10 +53,7 @@ class UserInfoActivity : OverflowMenuActivity() {
         }
         println("ユーザ情報画面")
         Log.d("チェック", "MyApplication.loginUserId = [${MyApplication.getInstance()}]")
-        Log.d(
-            "チェック",
-            "MyApplication.loginUserId = [${MyApplication.getInstance().loginUserId}]"
-        )
+        Log.d("チェック", "MyApplication.loginUserId = [${MyApplication.getInstance().loginUserId}]")
 
         // ２－１．画面デザインで定義したオブジェクトを変数として宣言する
         val userImage = findViewById<ImageView>(R.id.userImage)
@@ -120,8 +118,23 @@ class UserInfoActivity : OverflowMenuActivity() {
             // ２－６－２．フォロー一覧画面に遷移する
             startActivity(intent)
         }
+
         // ２－７．followButtonのクリックイベントリスナーを作成する
         val followButton = findViewById<Button>(R.id.followButton)
+        followButton.text = "フォローする"
+
+        followButton.setOnClickListener {
+            followButton.text = if (followButton.text == "フォローする") "フォロー解除" else "フォローする"
+        }
+        /*
+
+
+
+        // ２－７．followButtonのクリックイベントリスナーを作成する
+        val followButton = findViewById<Button>(R.id.followButton)
+
+        followButton.text = "フォローする"
+
         followButton.setOnClickListener {
             // 現在のボタンからフォロー状態を判断する
             val followButtonText = followButton.text.toString()
@@ -129,7 +142,7 @@ class UserInfoActivity : OverflowMenuActivity() {
             if (followButtonText == "フォローする") {
                 // ２－７－１－１．フォロー管理処理API　共通実行メソッドを呼び出してフォロー登録を行う。
                 val followFlg = true
-                postFollowManagement(currentDisplayUserId, followFlg)
+//                postFollowManagement(currentDisplayUserId, followFlg)
                 // ２－７－１－２．followButtonの文言をフォロー済みの内容に変更する。
                 followButton.text = "フォロー解除"
 
@@ -137,15 +150,18 @@ class UserInfoActivity : OverflowMenuActivity() {
             } else if (followButtonText == "フォロー解除") {
                 // ２－７－２－１．フォロー管理処理API　共通実行メソッドを呼び出してフォロー解除を行う。
                 val followFlg = false
-                postFollowManagement(currentDisplayUserId, followFlg)
+//                postFollowManagement(currentDisplayUserId, followFlg)
                 // ２－７－２－２．followButtonの文言を未フォローの内容に変更する。
                 followButton.text = "フォローする"
             }
         }
+
+         */
     }
 
 
-    private var currentDisplayUserId: String = ""
+
+
 
     // ３．ユーザささやき情報取得API　共通実行メソッド
     private fun getUserWhisperInfo(
@@ -160,11 +176,19 @@ class UserInfoActivity : OverflowMenuActivity() {
         good: RadioButton,
         recyclerView: RecyclerView
     ) {
+
         // ３－１．グローバル変数のログインユーザーIDを取得。
         val loginUserId = MyApplication.getInstance().loginUserId
 
         // ３－２．intentUserIdがNULLかチェックする。
         currentDisplayUserId = intentId ?: loginUserId
+
+
+
+
+
+
+
 
         // HTTP接続用インスタンス生成
         val client = OkHttpClient()
@@ -181,6 +205,8 @@ class UserInfoActivity : OverflowMenuActivity() {
             .url(MyApplication.getInstance().apiUrl + "userWhisperInfo.php")
             .post(requestBody)
             .build()
+
+        /*
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
@@ -221,8 +247,6 @@ class UserInfoActivity : OverflowMenuActivity() {
                     fwrcnt.text = json.optInt("followerCount", 0).toString()
 
 
-
-
                     // ３－３－５．フォローボタン制御
                     val followButton = findViewById<Button>(R.id.followButton)
                     if (currentDisplayUserId == loginUserId) {
@@ -231,10 +255,6 @@ class UserInfoActivity : OverflowMenuActivity() {
                         followButton.visibility = View.VISIBLE
                         followButton.text = if (json.optBoolean("followFlg", false)) "フォロー解除" else "フォローする"
                     }
-
-
-
-
 
                     // ３－３－６．選択されたラジオボタンにあったリストを設定
                     val followCount = json.optInt("followCount")
@@ -264,9 +284,13 @@ class UserInfoActivity : OverflowMenuActivity() {
                 }
             }
         })
+
+        */
     }
         // ４．フォロー管理処理API　共通実行メソッド
         private fun postFollowManagement(followUserId: String, followFlg: Boolean) {
+            /*
+
             val loginUserId = MyApplication.getInstance().loginUserId
 
             val client = OkHttpClient()
@@ -308,7 +332,11 @@ class UserInfoActivity : OverflowMenuActivity() {
                     }
                 }
             })
+            */
         }
+
+
+
 
 
 

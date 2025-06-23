@@ -70,8 +70,6 @@ class UserInfoActivity : OverflowMenuActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.userRecycle)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-//        whisper.isChecked = true
-
         // ２－２．インテント(前画面)から対象ユーザIDを取得する
         val intentUserId = intent.getStringExtra("userId")
 
@@ -204,8 +202,6 @@ class UserInfoActivity : OverflowMenuActivity() {
             .post(requestBody)
             .build()
 
-
-
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
                 val body = response.body?.string()
@@ -238,13 +234,6 @@ class UserInfoActivity : OverflowMenuActivity() {
                         whispers.add(whisper)
                     }
 
-                    // ２－２－３－１－２－１－２．ユーザ行情報のアダプターにユーザ情報リストをセットする
-//                    val recyclerView = findViewById<RecyclerView>(R.id.userRecycle)
-                    // ２－２－３－１－２－１－３．searchRecycleを表示する
-//                    recyclerView.layoutManager = LinearLayoutManager(this@UserInfoActivity)
-//                    recyclerView.adapter = WhisperAdapter(whispers, this@UserInfoActivity)
-
-
                     val goodList = json.optJSONArray("goodList") ?: JSONArray()
                     val goods = mutableListOf<GoodRowData>()
                     for (i in 0 until goodList.length()) {
@@ -262,16 +251,12 @@ class UserInfoActivity : OverflowMenuActivity() {
                     val recyclerView = findViewById<RecyclerView>(R.id.userRecycle)
                     // ２－２－３－１－２－１－３．searchRecycleを表示する
                     recyclerView.layoutManager = LinearLayoutManager(this@UserInfoActivity)
-//                    recyclerView.adapter = GoodAdapter(goods, this@UserInfoActivity)
-
-
-
-
 
                     // らじおぼたんのやつ
                     val radioGroup = findViewById<RadioGroup>(R.id.radioGroup)
                     // 例えば、チェックに応じて処理を分けたい場合
                     when (radioGroup.checkedRadioButtonId) {
+                        // ３－３－１－２．ささやき情報取得
                         R.id.whisperRadio -> {
                             Log.d("RadioGroup", "うぃすぱー")
                             recyclerView.adapter = WhisperAdapter(whispers, this@UserInfoActivity)
@@ -287,26 +272,26 @@ class UserInfoActivity : OverflowMenuActivity() {
                         }
                     }
 
-                    // ３－３－１－２．ささやき情報取得
+
 
 
                     // ３－３－１－３．イイね情報取得
                     runOnUiThread {
 //                        goodList.clear()
-                        json.optJSONArray("goods")?.let { arr ->
-                            for (i in 0 until arr.length()) {
-                                val obj = arr.getJSONObject(i)
+//                        json.optJSONArray("goods")?.let { arr ->
+//                            for (i in 0 until arr.length()) {
+//                                val obj = arr.getJSONObject(i)
 
-                                val data = GoodRowData(
-                                    userId = obj.optString("userId"),
-                                    userName = obj.optString("userName"),
-                                    whisper = obj.optString("content"),
-                                    gcnt = obj.optInt("goodCount"),
-                                    userImage = obj.optString("userImage")
-                                )
+//                                val data = GoodRowData(
+//                                    userId = obj.optString("userId"),
+//                                    userName = obj.optString("userName"),
+//                                    whisper = obj.optString("content"),
+//                                    gcnt = obj.optInt("goodCount"),
+//                                    userImage = obj.optString("userImage")
+//                                )
 //                                goodList.add(data)
-                            }
-                        }
+//                            }
+//                        }
 //                         RecyclerViewのセットアップは1回でOKならonCreateで済ませておき、ここではadapterだけ更新するのがおすすめ
 //                        val recyclerView = findViewById<RecyclerView>(R.id.userRecycle)
 //

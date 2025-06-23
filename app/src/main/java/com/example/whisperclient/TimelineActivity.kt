@@ -104,7 +104,9 @@ class TimelineActivity : OverflowMenuActivity() {
                         )
                         whisperList.add(data)
                     }
-                    recyclerView.adapter = WhisperAdapter(whisperList, applicationContext)
+                    val recyclerView = findViewById<RecyclerView>(R.id.timelineRecycle)
+                    recyclerView.layoutManager = LinearLayoutManager(this@TimelineActivity)
+                    recyclerView.adapter = WhisperAdapter(whisperList, this@TimelineActivity)
                 }
             }
 

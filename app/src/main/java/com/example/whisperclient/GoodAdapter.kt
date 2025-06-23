@@ -51,7 +51,7 @@ class GoodAdapter(private val dataset: MutableList<GoodRowData>, private val con
         // ３－４－２．userImageのクリックイベントリスナーを生成する
         holder.userImage.setOnClickListener {
             // ３－４－２－１．Adapterから画面遷移することになるので、インテントに新しいタスクで起動する為のフラグを追加する。
-            val intent = Intent(context, GoodAdapter::class.java).apply {
+            val intent = Intent(context, UserInfoActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 // ３－４－２－２．インテントに対象行のユーザIDをセットする
                 putExtra("userId", row.userId)

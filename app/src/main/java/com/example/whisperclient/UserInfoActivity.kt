@@ -103,6 +103,8 @@ class UserInfoActivity : OverflowMenuActivity() {
             )
         }
 
+        whisper.isChecked = true
+
         // ２－５．followCntTextのクリックイベントリスナーを作成する
         fwrnt.setOnClickListener {
             // ２－５－１．インテントに対象ユーザIDと文字列followをセットする
@@ -186,13 +188,6 @@ class UserInfoActivity : OverflowMenuActivity() {
         // ３－２．intentUserIdがNULLかチェックする。
         currentDisplayUserId = intentId ?: loginUserId
 
-
-
-
-
-
-
-
         // HTTP接続用インスタンス生成
         val client = OkHttpClient()
         val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
@@ -228,72 +223,139 @@ class UserInfoActivity : OverflowMenuActivity() {
                     }
 
 
-                    // onCreate内などに書く
-                    val radioGroup = findViewById<RadioGroup>(R.id.radioGroup)
-                    radioGroup.setOnCheckedChangeListener { _, checkedId ->
-                        // 例えば、チェックに応じて処理を分けたい場合
-                        when (checkedId) {
-                            R.id.whisperRadio -> {
-                                Log.d("RadioGroup", "a")
-                                recyclerView.adapter = WhisperAdapter(whisperList, this@UserInfoActivity)
-                                recyclerView.adapter?.notifyDataSetChanged()
-
-                                // ささやきラジオボタンが選択された時の処理
-                            }
-                            R.id.goodInfoRadio -> {
-                                Log.d("RadioGroup", "b")
-                                recyclerView.adapter = GoodAdapter(goodList, this@UserInfoActivity)
-                                recyclerView.adapter?.notifyDataSetChanged()
-                                // いいねラジオボタンが選択された時の処理
-                            }
-                        }
+                    val whisperList = json.optJSONArray("whisperList") ?: JSONArray()
+                    val whispers = mutableListOf<WhisperRowData>()
+                    for (i in 0 until whisperList.length()) {
+                        val obj = whisperList.getJSONObject(i)
+                        val whisper = WhisperRowData(
+                            userId = obj.optInt("userId"),
+                            userName = obj.optString("userName"),
+                            whisperId = obj.optInt("followCount"),
+                            whisperText = obj.optString("content"),
+                            userImage = obj.optString("followerCount"),
+                            goodImage = obj.optBoolean("userImage")
+                        )
+                        whispers.add(whisper)
                     }
 
+                    // ２－２－３－１－２－１－２．ユーザ行情報のアダプターにユーザ情報リストをセットする
+//                    val recyclerView = findViewById<RecyclerView>(R.id.userRecycle)
+                    // ２－２－３－１－２－１－３．searchRecycleを表示する
+//                    recyclerView.layoutManager = LinearLayoutManager(this@UserInfoActivity)
+//                    recyclerView.adapter = WhisperAdapter(whispers, this@UserInfoActivity)
 
+
+                    val goodList = json.optJSONArray("goodList") ?: JSONArray()
+                    val goods = mutableListOf<GoodRowData>()
+                    for (i in 0 until goodList.length()) {
+                        val obj = goodList.getJSONObject(i)
+                        val good = GoodRowData(
+                            userId = obj.optString("userId"),
+                            userName = obj.optString("userName"),
+                            whisper = obj.optString("content"),
+                            gcnt = obj.optInt("gcnt"),
+                            userImage = obj.optString("userImage")
+                        )
+                        goods.add(good)
+                    }
+                    // ２－２－３－１－２－１－２．ユーザ行情報のアダプターにユーザ情報リストをセットする
+                    val recyclerView = findViewById<RecyclerView>(R.id.userRecycle)
+                    // ２－２－３－１－２－１－３．searchRecycleを表示する
+                    recyclerView.layoutManager = LinearLayoutManager(this@UserInfoActivity)
+//                    recyclerView.adapter = GoodAdapter(goods, this@UserInfoActivity)
+
+
+
+
+
+                    // らじおぼたんのやつ
+                    val radioGroup = findViewById<RadioGroup>(R.id.radioGroup)
+                    // 例えば、チェックに応じて処理を分けたい場合
+                    when (radioGroup.checkedRadioButtonId) {
+                        R.id.whisperRadio -> {
+                            Log.d("RadioGroup", "うぃすぱー")
+                            recyclerView.adapter = WhisperAdapter(whispers, this@UserInfoActivity)
+                            recyclerView.adapter?.notifyDataSetChanged()
+
+                            // ささやきラジオボタンが選択された時の処理
+                        }
+                        R.id.goodInfoRadio -> {
+                            Log.d("RadioGroup", "ぐっど")
+                            recyclerView.adapter = GoodAdapter(goods, this@UserInfoActivity)
+                            recyclerView.adapter?.notifyDataSetChanged()
+                            // いいねラジオボタンが選択された時の処理
+                        }
+                    }
 
                     // ３－３－１－２．ささやき情報取得
 
 
                     // ３－３－１－３．イイね情報取得
-                    goodList.clear()
-                    json.optJSONArray("goods")?.let { arr ->
-                        for (i in 0 until arr.length()) {
-                            val obj = arr.getJSONObject(i)
+                    runOnUiThread {
+//                        goodList.clear()
+                        json.optJSONArray("goods")?.let { arr ->
+                            for (i in 0 until arr.length()) {
+                                val obj = arr.getJSONObject(i)
 
-                            val data = GoodRowData(
-                                userId = obj.optString("userId"),
-                                userName = obj.optString("userName"),
-                                whisper = obj.optString("content"),
-                                gcnt = obj.optInt("goodCount"),
-                                userImage = obj.optString("userImage")
-                            )
+                                val data = GoodRowData(
+                                    userId = obj.optString("userId"),
+                                    userName = obj.optString("userName"),
+                                    whisper = obj.optString("content"),
+                                    gcnt = obj.optInt("goodCount"),
+                                    userImage = obj.optString("userImage")
+                                )
+//                                goodList.add(data)
+                            }
+                        }
+//                         RecyclerViewのセットアップは1回でOKならonCreateで済ませておき、ここではadapterだけ更新するのがおすすめ
+//                        val recyclerView = findViewById<RecyclerView>(R.id.userRecycle)
+//
+//                        // adapterが未設定なら新規作成
+//                        if (recyclerView.adapter == null) {
+//                            recyclerView.layoutManager = LinearLayoutManager(this@UserInfoActivity)
+//                            recyclerView.adapter = GoodAdapter(goodList, this@UserInfoActivity)
+//                        } else {
+//                            // adapterがすでにあるならデータ更新を通知
+//                            recyclerView.adapter?.notifyDataSetChanged()
+//                        }
 
-                            goodList.add(data)
+                        userName.text = json.optString("userName", "")
+                        profile.text = json.optString("profile", "")
+                        fwrnt.text = json.optInt("followCount", 0).toString()
+                        fwrcnt.text = json.optInt("followerCount", 0).toString()
+                        // フォローボタン制御
+                        val followButton = findViewById<Button>(R.id.followButton)
+                        if (currentDisplayUserId == loginUserId) {
+                            followButton.visibility = View.GONE
+                        } else {
+                            followButton.visibility = View.VISIBLE
+                            followButton.text = if (json.optBoolean("userFollowFlg", false)) "フォロー解除" else "フォローする"
                         }
                     }
 
-                    // ３－３－４．取得したデータを各オブジェクトにセットする
-                    userName.text = json.optString("userName", "")
-                    profile.text = json.optString("profile", "")
-                    fwrnt.text = json.optInt("followCount", 0).toString()
-                    fwrcnt.text = json.optInt("followerCount", 0).toString()
 
+                    // ３－３－４．取得したデータを各オブジェクトにセットする
+//                    userName.text = json.optString("userName", "")
+//                    profile.text = json.optString("profile", "")
+//                    fwrnt.text = json.optInt("followCount", 0).toString()
+//                    fwrcnt.text = json.optInt("followerCount", 0).toString()
+//
 
                     // ３－３－５．フォローボタン制御
-                    val followButton = findViewById<Button>(R.id.followButton)
-                    if (currentDisplayUserId == loginUserId) {
-                        followButton.visibility = View.GONE
-                    } else {
-                        followButton.visibility = View.VISIBLE
-                        followButton.text = if (json.optBoolean("followFlg", false)) "フォロー解除" else "フォローする"
-                    }
+//                    val followButton = findViewById<Button>(R.id.followButton)
+//                    if (currentDisplayUserId == loginUserId) {
+//                        followButton.visibility = View.GONE
+//                    } else {
+//                        followButton.visibility = View.VISIBLE
+//                        followButton.text = if (json.optBoolean("followFlg", false)) "フォロー解除" else "フォローする"
+//                    }
 
                     // ３－３－６．選択されたラジオボタンにあったリストを設定
-                    if (whisper.isChecked) {
-                        recyclerView.adapter = WhisperAdapter(whisperList, this@UserInfoActivity)
-                    } else if (good.isChecked) {
-                        recyclerView.adapter = GoodAdapter(goodList, this@UserInfoActivity)
-                    }
+//                    if (whisper.isChecked) {
+//                        recyclerView.adapter = WhisperAdapter(whisperList, this@UserInfoActivity)
+//                    } else if (good.isChecked) {
+//                        recyclerView.adapter = GoodAdapter(goodList, this@UserInfoActivity)
+//                    }
 
                 }
             }

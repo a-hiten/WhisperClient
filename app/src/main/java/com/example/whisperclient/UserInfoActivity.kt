@@ -38,8 +38,8 @@ class UserInfoActivity : OverflowMenuActivity() {
 
     // リストを保持する用
     private var currentDisplayUserId: String = ""
-    private val goodList = mutableListOf<GoodRowData>()
-    private val whisperList = mutableListOf<WhisperRowData>()
+    //フォロー数表示用
+    private lateinit var fwrnt: TextView
 
     // ２．画面生成時（onCreate処理）
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +66,7 @@ class UserInfoActivity : OverflowMenuActivity() {
         val fwrcnt = findViewById<TextView>(R.id.followerCntText)
         val whisper = findViewById<RadioButton>(R.id.whisperRadio)
         val good = findViewById<RadioButton>(R.id.goodInfoRadio)
+
 
         val recyclerView = findViewById<RecyclerView>(R.id.userRecycle)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -111,7 +112,6 @@ class UserInfoActivity : OverflowMenuActivity() {
             intent.putExtra("mode", "follow")
             // ２－５－２．フォロー一覧画面に遷移する
             startActivity(intent)
-
             Log.d("フォロー","フォローだがね")
         }
         // ２－６．followerCntTextのクリックイベントリスナーを作成する
@@ -122,7 +122,6 @@ class UserInfoActivity : OverflowMenuActivity() {
             intent.putExtra("mode", "follower")
             // ２－６－２．フォロー一覧画面に遷移する
             startActivity(intent)
-
             Log.d("フォロワー","フォロワーだがね")
         }
 
@@ -133,42 +132,39 @@ class UserInfoActivity : OverflowMenuActivity() {
         followButton.setOnClickListener {
             followButton.text = if (followButton.text == "フォローする") "フォロー解除" else "フォローする"
         }
-        /*
-
-
 
         // ２－７．followButtonのクリックイベントリスナーを作成する
-        val followButton = findViewById<Button>(R.id.followButton)
-
-        followButton.text = "フォローする"
-
         followButton.setOnClickListener {
-            // 現在のボタンからフォロー状態を判断する
+            // 今のボタンの状態からフォローかどうかを確認する
             val followButtonText = followButton.text.toString()
+            // 現在の画面のユーザ
+            val followerCount = fwrcnt.text.toString().toIntOrNull() ?: 0
+
+
             // ２－７－１．未フォローの場合
             if (followButtonText == "フォローする") {
                 // ２－７－１－１．フォロー管理処理API　共通実行メソッドを呼び出してフォロー登録を行う。
-                val followFlg = true
-//                postFollowManagement(currentDisplayUserId, followFlg)
+                postFollowManagement(currentDisplayUserId, true)
                 // ２－７－１－２．followButtonの文言をフォロー済みの内容に変更する。
                 followButton.text = "フォロー解除"
 
-                // ２－７－２．フォロー済みの場合
+                fwrcnt.text = (followerCount + 1).toString()
+
+                Log.d("ふぉろー","ふぉろーしたよ")
+
+            // ２－７－２．フォロー済みの場合
             } else if (followButtonText == "フォロー解除") {
                 // ２－７－２－１．フォロー管理処理API　共通実行メソッドを呼び出してフォロー解除を行う。
-                val followFlg = false
-//                postFollowManagement(currentDisplayUserId, followFlg)
+                postFollowManagement(currentDisplayUserId, false)
                 // ２－７－２－２．followButtonの文言を未フォローの内容に変更する。
                 followButton.text = "フォローする"
+
+                fwrcnt.text = (if (followerCount > 0) followerCount - 1 else 0).toString()
+
+                Log.d("かいじょ","かいじょしたよー")
             }
         }
-
-         */
     }
-
-
-
-
 
     // ３．ユーザささやき情報取得API　共通実行メソッド
     private fun getUserWhisperInfo(
@@ -262,90 +258,33 @@ class UserInfoActivity : OverflowMenuActivity() {
                     when (radioGroup.checkedRadioButtonId) {
                         // ３－３－１－２．ささやき情報取得
                         R.id.whisperRadio -> {
+                            // ささやきラジオボタンが選択された時の処理
                             Log.d("RadioGroup", "うぃすぱー")
                             recyclerView.adapter = WhisperAdapter(whispers, this@UserInfoActivity)
                             recyclerView.adapter?.notifyDataSetChanged()
-
-                            // ささやきラジオボタンが選択された時の処理
                         }
+                        // ３－３－１－３．イイね情報取得
                         R.id.goodInfoRadio -> {
+                            // いいねラジオボタンが選択された時の処理
                             Log.d("RadioGroup", "ぐっど")
                             recyclerView.adapter = GoodAdapter(goods, this@UserInfoActivity)
                             recyclerView.adapter?.notifyDataSetChanged()
-                            // いいねラジオボタンが選択された時の処理
                         }
                     }
-
-
-
-
-                    // ３－３－１－３．イイね情報取得
-                    runOnUiThread {
-//                        goodList.clear()
-//                        json.optJSONArray("goods")?.let { arr ->
-//                            for (i in 0 until arr.length()) {
-//                                val obj = arr.getJSONObject(i)
-
-//                                val data = GoodRowData(
-//                                    userId = obj.optString("userId"),
-//                                    userName = obj.optString("userName"),
-//                                    whisper = obj.optString("content"),
-//                                    gcnt = obj.optInt("goodCount"),
-//                                    userImage = obj.optString("userImage")
-//                                )
-//                                goodList.add(data)
-//                            }
-//                        }
-//                         RecyclerViewのセットアップは1回でOKならonCreateで済ませておき、ここではadapterだけ更新するのがおすすめ
-//                        val recyclerView = findViewById<RecyclerView>(R.id.userRecycle)
-//
-//                        // adapterが未設定なら新規作成
-//                        if (recyclerView.adapter == null) {
-//                            recyclerView.layoutManager = LinearLayoutManager(this@UserInfoActivity)
-//                            recyclerView.adapter = GoodAdapter(goodList, this@UserInfoActivity)
-//                        } else {
-//                            // adapterがすでにあるならデータ更新を通知
-//                            recyclerView.adapter?.notifyDataSetChanged()
-//                        }
-
-                        userName.text = json.optString("userName", "")
-                        profile.text = json.optString("profile", "")
-                        fwrnt.text = json.optInt("followCount", 0).toString()
-                        fwrcnt.text = json.optInt("followerCount", 0).toString()
-                        // フォローボタン制御
-                        val followButton = findViewById<Button>(R.id.followButton)
-                        if (currentDisplayUserId == loginUserId) {
-                            followButton.visibility = View.GONE
-                        } else {
-                            followButton.visibility = View.VISIBLE
-                            followButton.text = if (json.optBoolean("userFollowFlg", false)) "フォロー解除" else "フォローする"
-                        }
-                    }
-
 
                     // ３－３－４．取得したデータを各オブジェクトにセットする
-//                    userName.text = json.optString("userName", "")
-//                    profile.text = json.optString("profile", "")
-//                    fwrnt.text = json.optInt("followCount", 0).toString()
-//                    fwrcnt.text = json.optInt("followerCount", 0).toString()
-//
-
+                    userName.text = json.optString("userName", "")
+                    profile.text = json.optString("profile", "")
+                    fwrnt.text = json.optInt("followCount", 0).toString()
+                    fwrcnt.text = json.optInt("followerCount", 0).toString()
                     // ３－３－５．フォローボタン制御
-//                    val followButton = findViewById<Button>(R.id.followButton)
-//                    if (currentDisplayUserId == loginUserId) {
-//                        followButton.visibility = View.GONE
-//                    } else {
-//                        followButton.visibility = View.VISIBLE
-//                        followButton.text = if (json.optBoolean("followFlg", false)) "フォロー解除" else "フォローする"
-//                    }
-
-                    // ３－３－６．選択されたラジオボタンにあったリストを設定
-//                    if (whisper.isChecked) {
-//                        recyclerView.adapter = WhisperAdapter(whisperList, this@UserInfoActivity)
-//                    } else if (good.isChecked) {
-//                        recyclerView.adapter = GoodAdapter(goodList, this@UserInfoActivity)
-//                    }
-
+                    val followButton = findViewById<Button>(R.id.followButton)
+                    if (currentDisplayUserId == loginUserId) {
+                        followButton.visibility = View.GONE
+                    } else {
+                        followButton.visibility = View.VISIBLE
+                        followButton.text = if (json.optBoolean("userFollowFlg", false)) "フォロー解除" else "フォローする"
+                    }
                 }
             }
 
@@ -357,60 +296,65 @@ class UserInfoActivity : OverflowMenuActivity() {
                 }
             }
         })
-
-
     }
-        // ４．フォロー管理処理API　共通実行メソッド
-        private fun postFollowManagement(followUserId: String, followFlg: Boolean) {
-            /*
 
-            val loginUserId = MyApplication.getInstance().loginUserId
+    /*
+        ４.フォロー管理処理API　共通メソッド
+        引数　　followUserId  String
+              followFlg     Boolean
 
-            val client = OkHttpClient()
-            val mediaType = "application/json; charset=utf-8".toMediaType()
-            val json = JSONObject().apply {
-                put("loginUserId", loginUserId)
-                put("followUserId", followUserId)
-                put("followFlg", followFlg)
-            }
-            val requestBody = json.toString().toRequestBody(mediaType)
-            val request = Request.Builder()
-                .url(MyApplication.getInstance().apiUrl + "followControl.php")
-                .post(requestBody)
-                .build()
+        戻り値　なし
+     */
+    // ４．フォロー管理処理API　共通実行メソッド
+    private fun postFollowManagement(followUserId: String, followFlg: Boolean) {
+        // ４－１．グローバル変数のログインユーザーIDを取得。
+        val loginUserId = MyApplication.getInstance().loginUserId
 
-            client.newCall(request).enqueue(object : Callback {
-                override fun onResponse(call: Call, response: Response) {
-                    val bodyStr = response.body?.string() ?: return
-                    val res = JSONObject(bodyStr)
-                    val status = res.optString("status", res.optString("result", "error"))
-                    if (status != "success") {
-                        runOnUiThread {
-                            Toast.makeText(
-                                applicationContext,
-                                res.optString("error", "フォロー失敗"),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                }
+        // HTTP接続用インスタンス生成
+        val client = OkHttpClient()
+        val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
 
-                override fun onFailure(call: Call, e: IOException) {
+        // Bodyのデータ（APIに渡したいパラメータを設定）
+        val requestBodyJson = JSONObject().apply {
+            put("userId", loginUserId)
+            put("followUserId", followUserId)
+            put("followFlg", followFlg)
+        }
+
+        val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
+        val request = Request.Builder()
+            .url(MyApplication.getInstance().apiUrl + "followCtl.php")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                val bodyStr = response.body?.string() ?: return
+                val res = JSONObject(bodyStr)
+                val status = res.optString("status", res.optString("result", "error"))
+                if (status != "success") {
                     runOnUiThread {
                         Toast.makeText(
                             applicationContext,
-                            "フォローリクエスト失敗",
+                            res.optString("error", "フォロー失敗"),
                             Toast.LENGTH_SHORT
                         ).show()
                     }
                 }
-            })
-            */
-        }
+            }
 
-
-
-
+            override fun onFailure(call: Call, e: IOException) {
+                // ２－４－２－１．エラーメッセージをトースト表示する
+                runOnUiThread {
+                    Toast.makeText(
+                        applicationContext,
+                        "リクエストに失敗しました。",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        })
+    }
 
 
     // オーバーフローメニューを選んだ時に共通処理を呼び出す。

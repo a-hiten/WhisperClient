@@ -77,7 +77,7 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
                 // ３－４－３－２．インテントに対象行のユーザIDをセットする
-                putExtra("USER_ID", item.userId)
+                putExtra("userId", item.userId)
             }
             // ３－４－３－３．ユーザ情報画面に遷移する
             context.startActivity(intent)
@@ -121,8 +121,13 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
                                 .show()
                             return@runOnUiThread
                         }
+                        // ３－４－４－１－１－２．対象行のいいねのレイアウトを切り替えるため、いいねフラグの変更を通知する。
+//                        item.goodImage = !item.goodImage
+//                        notifyItemChanged(position)
+
                     }
                 }
+
 
                 // ３－４－４－１－２．リクエストが失敗した時(コールバック処理)
                 override fun onFailure(call: Call, e: IOException) {
@@ -133,7 +138,9 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
                     }
                 }
             })
-            // ３－４－４－１－１－２．対象行のいいねのレイアウトを切り替えるため、いいねフラグの変更を通知する。
+
+
+
 
         }
     }

@@ -111,6 +111,8 @@ class UserInfoActivity : OverflowMenuActivity() {
             intent.putExtra("mode", "follow")
             // ２－５－２．フォロー一覧画面に遷移する
             startActivity(intent)
+
+            Log.d("フォロー","フォローだがね")
         }
         // ２－６．followerCntTextのクリックイベントリスナーを作成する
         fwrcnt.setOnClickListener {
@@ -120,6 +122,8 @@ class UserInfoActivity : OverflowMenuActivity() {
             intent.putExtra("mode", "follower")
             // ２－６－２．フォロー一覧画面に遷移する
             startActivity(intent)
+
+            Log.d("フォロワー","フォロワーだがね")
         }
 
         // ２－７．followButtonのクリックイベントリスナーを作成する

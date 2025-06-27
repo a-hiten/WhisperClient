@@ -41,11 +41,20 @@ class FollowListActivity : OverflowMenuActivity() {
 
         // ２－２．インテント(前画面)から対象ユーザIDと区分（フォロー・フォロワー）を取得する
         val userId = intent.getStringExtra("userId") ?: ""
-        val section = intent.getStringExtra("section") ?: "1"
+        val section = intent.getStringExtra("mode") ?: "follow"
 
         // ２－３．区分に併せて、followListTextのテキストを変更する
-        val follwListText = findViewById<TextView>(R.id.followListText)
-        follwListText.text = if (section == "1") "フォロー一覧" else "フォロワー一覧"
+//        val follwListText = findViewById<TextView>(R.id.followListText)
+//        follwListText.text = if (section == "1") "フォロー一覧" else "フォロワー一覧"
+
+        val followListText = findViewById<TextView>(R.id.followListText)
+        followListText.text = when (section) {
+            "follow" -> "フォロー一覧"
+            "follower" -> "フォロワー一覧"
+            else -> "一覧"
+        }
+
+
 
         // ２－４．フォロワー情報取得APIをリクエストして対象ユーザのフォロー・フォロワー情報取得処理を行う
         // HTTP接続用インスタンス生成
@@ -126,7 +135,7 @@ class FollowListActivity : OverflowMenuActivity() {
                     }
 
                     // ２－４－２－４．followRecycleにフォロー情報リストまたはフォロワー情報リストをセットする
-                    if (section == "1") {
+                    if (section == "follow") {
                         // ２－４－２－４ー１．区分がフォローの場合、フォロー情報リストセットする
                         recyclerView.adapter = UserAdapter(followList, applicationContext)
                     } else {

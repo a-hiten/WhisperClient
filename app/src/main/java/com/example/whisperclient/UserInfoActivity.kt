@@ -298,13 +298,6 @@ class UserInfoActivity : OverflowMenuActivity() {
         })
     }
 
-    /*
-        ４.フォロー管理処理API　共通メソッド
-        引数　　followUserId  String
-              followFlg     Boolean
-
-        戻り値　なし
-     */
     // ４．フォロー管理処理API　共通実行メソッド
     private fun postFollowManagement(followUserId: String, followFlg: Boolean) {
         // ４－１．グローバル変数のログインユーザーIDを取得。
@@ -320,7 +313,6 @@ class UserInfoActivity : OverflowMenuActivity() {
             put("followUserId", followUserId)
             put("followFlg", followFlg)
         }
-
         val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
         val request = Request.Builder()
             .url(MyApplication.getInstance().apiUrl + "followCtl.php")

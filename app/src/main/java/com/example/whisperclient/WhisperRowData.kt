@@ -8,7 +8,7 @@ data class WhisperRowData(
     val whisperId: Int,         // ささやき番号:
     val whisperText: String,    // ささやき内容
     val userImage: String,      // アイコンの画像パス
-    val goodImage: Boolean,       // いいねフラグ
+    var goodImage: Boolean,       // いいねフラグ
 
 )
 

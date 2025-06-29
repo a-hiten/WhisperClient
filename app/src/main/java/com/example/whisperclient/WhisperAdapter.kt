@@ -50,11 +50,14 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
         // ３－３－１．ささやき行情報の画面デザイン（whisper_recycle_row）をViewHolderに設定し、戻り値にセットする。
         val view = LayoutInflater.from(parent.context).inflate(R.layout.whisper_recycle_row, parent, false)
         return ViewHolder(view)
+
     }
 
 
     // ３－４．ビューホルダーバインド時（onBindViewHolder処理）
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        //イイねの画像のやつ
+        holder.goodImage.setImageResource(R.drawable.star)
 
         // datasetから現在の行のデータを取得する
         val item = dataset[position]
@@ -65,10 +68,24 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
         holder.whisper.text = dataset[position].whisperText
         Log.d("aa",holder.whisper.text.toString())
 
+
+        holder.goodImage.setImageResource(
+            if (item.goodImage) R.drawable.star_on else R.drawable.star_off
+        )
+
+
+
         // ３－４－２．イイねフラグに併せて、いいね画像を切り替える。
-//        holder.goodImage.setImageResource(
+//        holder.goodImage.setOnClickListener {
+//            item.goodImage = !item.goodImage
 //
-//        )
+//            holder.goodImage.setImageResource(
+//                if (item.goodImage) R.drawable.star_on else R.drawable.star_off
+//
+//            )
+//            Log.d("クリックした","イイね押したよ")
+//            Toast.makeText(context, "画像クリックされました", Toast.LENGTH_SHORT).show()
+//        }
 
         // ３－４－３．userImageのクリックイベントリスナーを生成する
         holder.userImage.setOnClickListener {
@@ -83,11 +100,28 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
             context.startActivity(intent)
         }
 
+
         // ３－４－４．goodImageのクリックイベントリスナーを生成する
         holder.goodImage.setOnClickListener {
+            // ３－４－２．イイねフラグに併せて、いいね画像を切り替える。
+            item.goodImage = !item.goodImage
+
+            holder.goodImage.setImageResource(
+                if (item.goodImage) R.drawable.star_on else R.drawable.star_off
+            )
+
+            if (item.goodImage) {
+                holder.goodImage.setImageResource(R.drawable.star_on)
+                Log.d("画像切り替え", "いいねをしました。")
+            } else {
+                holder.goodImage.setImageResource(R.drawable.star_off)
+                Log.d("画像切り替え", "いいねを解除しました。")
+            }
+
+            Toast.makeText(context, "イイねの画像をクリックしました！！！", Toast.LENGTH_SHORT).show()
+
+
             // ３－４－４－１．イイね管理処理APIをリクエストして入力した対象行のささやきのイイねの登録・解除を行う
-
-
             // HTTP接続用インスタンス生成
             val client = OkHttpClient()
             // JSON形式でパラメータを送るようデータ形式を設定
@@ -95,10 +129,12 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
             // Bodyのデータ(APIに渡したいパラメータを設定)
             val requestBodyJson = JSONObject().apply {
                 put("userId", item.userId)
-                put("whisper", item.whisperId)
-                put("goodFlg", item.goodImage)
-
+                put("whisperNo", item.whisperId)
+//                put("goodFlg", item.goodImage)
+                put("goodFlg", if (item.goodImage) 1 else 0)
             }
+            Log.d("ぱらめーたのなまえかくにん", requestBodyJson.toString())
+
             // BodyのデータをAPIに送るためにRequestBody形式に加工
             val requestBody = requestBodyJson.toString().toRequestBody(mediaType)
             // Requestを作成(先ほど設定したデータ形式とパラメータ情報をもとにリクエストデータを作成)
@@ -113,6 +149,7 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
                     (context as? android.app.Activity)?.runOnUiThread {
                         val json = JSONObject(bodyStr)
                         val status = json.optString("status", json.optString("result", "error"))
+
 
                         // ３－４－４－１－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
                         if (status != "success") {
@@ -132,18 +169,16 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
                 // ３－４－４－１－２．リクエストが失敗した時(コールバック処理)
                 override fun onFailure(call: Call, e: IOException) {
                     // ３－４－４－１－２－１．エラーメッセージをトースト表示する
-                    (context as? android.app.Activity)?.runOnUiThread{
-                        Toast.makeText(context, "リクエストが失敗しました", Toast.LENGTH_SHORT).show()
+                    (context as? android.app.Activity)?.runOnUiThread {
+                        Toast.makeText(context, "リクエストが失敗しました", Toast.LENGTH_SHORT)
+                            .show()
                         return@runOnUiThread
                     }
                 }
             })
-
-
-
-
         }
     }
+
     // ３－５．行数取得時（getItemCount処理）
     override fun getItemCount(): Int {
         // ３－５－１．行リストの件数（データセットのサイズ）を戻り値にセットする

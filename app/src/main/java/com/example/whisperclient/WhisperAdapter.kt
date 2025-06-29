@@ -57,7 +57,7 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
     // ３－４．ビューホルダーバインド時（onBindViewHolder処理）
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         //イイねの画像のやつ
-        holder.goodImage.setImageResource(R.drawable.star)
+        holder.goodImage.setImageResource(R.drawable.star_on)
 
         // datasetから現在の行のデータを取得する
         val item = dataset[position]
@@ -103,22 +103,23 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
 
         // ３－４－４．goodImageのクリックイベントリスナーを生成する
         holder.goodImage.setOnClickListener {
+
             // ３－４－２．イイねフラグに併せて、いいね画像を切り替える。
-            item.goodImage = !item.goodImage
+//            item.goodImage = !item.goodImage
 
-            holder.goodImage.setImageResource(
-                if (item.goodImage) R.drawable.star_on else R.drawable.star_off
-            )
-
-            if (item.goodImage) {
-                holder.goodImage.setImageResource(R.drawable.star_on)
-                Log.d("画像切り替え", "いいねをしました。")
-            } else {
-                holder.goodImage.setImageResource(R.drawable.star_off)
-                Log.d("画像切り替え", "いいねを解除しました。")
-            }
-
-            Toast.makeText(context, "イイねの画像をクリックしました！！！", Toast.LENGTH_SHORT).show()
+//            holder.goodImage.setImageResource(
+//                if (item.goodImage) R.drawable.star_on else R.drawable.star_off
+//            )
+//
+//            if (item.goodImage) {
+//                holder.goodImage.setImageResource(R.drawable.star_on)
+//                Log.d("画像切り替え", "いいねをしました。")
+//            } else {
+//                holder.goodImage.setImageResource(R.drawable.star_off)
+//                Log.d("画像切り替え", "いいねを解除しました。")
+//            }
+//
+//            Toast.makeText(context, "イイねの画像をクリックしました！！！", Toast.LENGTH_SHORT).show()
 
 
             // ３－４－４－１．イイね管理処理APIをリクエストして入力した対象行のささやきのイイねの登録・解除を行う
@@ -128,9 +129,8 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
             val mediaType: MediaType = "application/json; charset=utf-8".toMediaType()
             // Bodyのデータ(APIに渡したいパラメータを設定)
             val requestBodyJson = JSONObject().apply {
-                put("userId", item.userId)
+                put("userId", MyApplication.getInstance().loginUserId)
                 put("whisperNo", item.whisperId)
-//                put("goodFlg", item.goodImage)
                 put("goodFlg", if (item.goodImage) 1 else 0)
             }
             Log.d("ぱらめーたのなまえかくにん", requestBodyJson.toString())
@@ -142,6 +142,7 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
                 .url(MyApplication.getInstance().apiUrl + "goodCtl.php")
                 .post(requestBody) // リクエストするパラメータ設定
                 .build()
+
             client.newCall(request).enqueue(object : Callback {
                 // ３－４－４－１－１．正常にレスポンスを受け取った時(コールバック処理)
                 override fun onResponse(call: Call, response: Response) {
@@ -150,6 +151,8 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
                         val json = JSONObject(bodyStr)
                         val status = json.optString("status", json.optString("result", "error"))
 
+                        Log.d("Request JSON", requestBodyJson.toString()) // パラメータ確認
+                        Log.d("API Response", bodyStr)                    // サーバーの返答確認
 
                         // ３－４－４－１－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
                         if (status != "success") {
@@ -161,6 +164,11 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
                         // ３－４－４－１－１－２．対象行のいいねのレイアウトを切り替えるため、いいねフラグの変更を通知する。
 //                        item.goodImage = !item.goodImage
 //                        notifyItemChanged(position)
+                        val currentPosition = holder.adapterPosition
+                        if (currentPosition != RecyclerView.NO_POSITION) {
+                            item.goodImage = !item.goodImage
+                            notifyItemChanged(currentPosition)
+                        }
 
                     }
                 }

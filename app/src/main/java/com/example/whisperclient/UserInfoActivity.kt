@@ -229,7 +229,7 @@ class UserInfoActivity : OverflowMenuActivity() {
                             whisperId = obj.optInt("followCount"),
                             whisperText = obj.optString("content"),
                             userImage = obj.optString("followerCount"),
-                            goodImage = obj.optBoolean("userImage")
+                            goodImage = obj.optInt("goodFlg") == 1
                         )
                         whispers.add(whisper)
                     }

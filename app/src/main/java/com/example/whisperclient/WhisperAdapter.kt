@@ -26,8 +26,6 @@ import org.json.JSONObject
 // ３－１．RecyclerView.Adapterクラスを継承する。
 class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private val context: Context) : RecyclerView.Adapter<WhisperAdapter.ViewHolder>() {
 
-
-
     // ３－２．ビューホルダー（内部クラス）
     class ViewHolder(item: View) :RecyclerView.ViewHolder(item){
 
@@ -50,14 +48,10 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
         // ３－３－１．ささやき行情報の画面デザイン（whisper_recycle_row）をViewHolderに設定し、戻り値にセットする。
         val view = LayoutInflater.from(parent.context).inflate(R.layout.whisper_recycle_row, parent, false)
         return ViewHolder(view)
-
     }
-
 
     // ３－４．ビューホルダーバインド時（onBindViewHolder処理）
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        //イイねの画像のやつ
-//        holder.goodImage.setImageResource(R.drawable.star_on)
 
         // datasetから現在の行のデータを取得する
         val item = dataset[position]
@@ -72,20 +66,6 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
         holder.goodImage.setImageResource(
             if (item.goodImage) R.drawable.star_on else R.drawable.star_off
         )
-
-
-
-        // ３－４－２．イイねフラグに併せて、いいね画像を切り替える。
-//        holder.goodImage.setOnClickListener {
-//            item.goodImage = !item.goodImage
-//
-//            holder.goodImage.setImageResource(
-//                if (item.goodImage) R.drawable.star_on else R.drawable.star_off
-//
-//            )
-//            Log.d("クリックした","イイね押したよ")
-//            Toast.makeText(context, "画像クリックされました", Toast.LENGTH_SHORT).show()
-//        }
 
         // ３－４－３．userImageのクリックイベントリスナーを生成する
         holder.userImage.setOnClickListener {
@@ -103,14 +83,12 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
 
         // ３－４－４．goodImageのクリックイベントリスナーを生成する
         holder.goodImage.setOnClickListener {
-
 //            // ３－４－２．イイねフラグに併せて、いいね画像を切り替える。
 //            item.goodImage = !item.goodImage
 //
 //            holder.goodImage.setImageResource(
 //                if (item.goodImage) R.drawable.star_on else R.drawable.star_off
 //            )
-//
 //            if (item.goodImage) {
 //                holder.goodImage.setImageResource(R.drawable.star_on)
 //                Log.d("画像切り替え", "いいねをしました。")
@@ -161,8 +139,6 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
                             return@runOnUiThread
                         }
                         // ３－４－４－１－１－２．対象行のいいねのレイアウトを切り替えるため、いいねフラグの変更を通知する。
-//                        item.goodImage = !item.goodImage
-//                        notifyItemChanged(position)
                         val currentPosition = holder.adapterPosition
                         if (currentPosition != RecyclerView.NO_POSITION) {
                             item.goodImage = !item.goodImage

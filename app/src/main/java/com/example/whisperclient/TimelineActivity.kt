@@ -95,7 +95,7 @@ class TimelineActivity : OverflowMenuActivity() {
                     for (i in 0 until whispers.length()) {
                         val obj = whispers.getJSONObject(i)
                         val data = WhisperRowData(
-                            userId = 0,
+                            userId = obj.optString("userId"),
                             userName = obj.optString("userName"),
                             whisperId = obj.optInt("whisperNo"),
                             whisperText = obj.optString("content"),

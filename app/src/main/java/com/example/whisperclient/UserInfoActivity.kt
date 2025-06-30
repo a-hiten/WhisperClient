@@ -224,29 +224,34 @@ class UserInfoActivity : OverflowMenuActivity() {
                     for (i in 0 until whisperList.length()) {
                         val obj = whisperList.getJSONObject(i)
                         val whisper = WhisperRowData(
-                            userId = obj.optInt("userId"),
+                            userId = obj.optString("userId"),
                             userName = obj.optString("userName"),
-                            whisperId = obj.optInt("followCount"),
+                            whisperId = obj.optInt("whisperNo"),
                             whisperText = obj.optString("content"),
-                            userImage = obj.optString("followerCount"),
-                            goodImage = obj.optInt("goodFlg") == 1
+                            userImage = "",
+                            goodImage = obj.optBoolean("goodFlg")
                         )
                         whispers.add(whisper)
                     }
 
                     val goodList = json.optJSONArray("goodList") ?: JSONArray()
-                    val goods = mutableListOf<GoodRowData>()
+                    val goods = mutableListOf<WhisperRowData>()
                     for (i in 0 until goodList.length()) {
                         val obj = goodList.getJSONObject(i)
-                        val good = GoodRowData(
+                        val good = WhisperRowData(
                             userId = obj.optString("userId"),
                             userName = obj.optString("userName"),
-                            whisper = obj.optString("content"),
-                            gcnt = obj.optInt("gcnt"),
-                            userImage = obj.optString("userImage")
+                            whisperId = obj.optInt("whisperNo"),
+                            whisperText = obj.optString("content"),
+                            userImage = "",
+                            goodImage = obj.optBoolean("goodFlg")
                         )
                         goods.add(good)
                     }
+
+                    Log.d("全体内容", json.toString())
+                    Log.d("ぐっどのやつ","ユーザー数: ${goods.size}")
+
                     // ２－２－３－１－２－１－２．ユーザ行情報のアダプターにユーザ情報リストをセットする
                     val recyclerView = findViewById<RecyclerView>(R.id.userRecycle)
                     // ２－２－３－１－２－１－３．searchRecycleを表示する
@@ -267,7 +272,7 @@ class UserInfoActivity : OverflowMenuActivity() {
                         R.id.goodInfoRadio -> {
                             // いいねラジオボタンが選択された時の処理
                             Log.d("RadioGroup", "ぐっど")
-                            recyclerView.adapter = GoodAdapter(goods, this@UserInfoActivity)
+                            recyclerView.adapter = WhisperAdapter(goods, this@UserInfoActivity)
                             recyclerView.adapter?.notifyDataSetChanged()
                         }
                     }
@@ -348,110 +353,8 @@ class UserInfoActivity : OverflowMenuActivity() {
         })
     }
 
-
     // オーバーフローメニューを選んだ時に共通処理を呼び出す。
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return OverflowMenuActivity.handleMenuItemSelected(this,item) || super.onOptionsItemSelected(item)
     }
 }
-
-
-/*
-１．OverFlowMenuActivityクラスを継承する
-
-２．画面生成時（onCreate処理）
-	２－１．画面デザインで定義したオブジェクトを変数として宣言する
-
-	２－２．インテント(前画面)から対象ユーザIDを取得する
-
-	２－３．ユーザささやき情報取得API　共通実行メソッドを呼び出す
-
-	２－４．radioGroupのチェック変更イベントリスナーを作成する
-		２－４－１．ユーザささやき情報取得API　共通実行メソッドを呼び出してラジオボタンにあった情報を取得する
-
-	２－５．followCntTextのクリックイベントリスナーを作成する
-		２－５－１．インテントに対象ユーザIDと文字列followをセットする
-
-		２－５－２．フォロー一覧画面に遷移する
-
-	２－６．followerCntTextのクリックイベントリスナーを作成する
-		２－６－１．インテントに対象ユーザIDと文字列followerをセットする
-
-		２－６－２．フォロー一覧画面に遷移する
-
-	２－７．followButtonのクリックイベントリスナーを作成する
-		２－７－１．未フォローの場合
-			２－７－１－１．フォロー管理処理API　共通実行メソッドを呼び出してフォロー登録を行う。
-
-			２－７－１－２．followButtonの文言をフォロー済みの内容に変更する。
-
-		２－７－２．フォロー済みの場合
-			２－７－２－１．フォロー管理処理API　共通実行メソッドを呼び出してフォロー解除を行う。
-
-			２－７－２－２．followButtonの文言を未フォローの内容に変更する。
-
-		3．ユーザささやき情報取得API　共通実行メソッド
-          引数　　intentUserId		String
-                userNameText		TextView
-                profileText			TextView
-                followCntText		TextView
-                followerCntText		TextView
-                followBtn			Button
-                userRecycle			RecyclerView
-                radioGroup			RadioGroup
-        戻り値　　なし
-
-        ３－１．グローバル変数のログインユーザーIDを取得。
-
-        ３－２．intentUserIdがNULLかチェックする。
-            ３－２－１．NULLの場合、ログインユーザーIDを表示対象のユーザIDとして変数に保持する。
-
-            ３－２－２．NULLではない場合、intentUserIDを表示対象のユーザIDとして変数に保持する。
-
-        ３－３．ユーザささやき情報取得APIをリクエストして対象ユーザのささやき情報とそのユーザがイイねしている情報取得を行う
-            ３－３ー１．正常にレスポンスを受け取った時(コールバック処理)
-                ３－３－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
-
-                ３－３－１－２．ささやき情報一覧が存在するかチェックする
-                    ３－３－１－２－１．ささやき情報が存在する場合、以下の処理を繰り返す
-                        ３－３－１－２－１－１．ささやき情報をリストに格納する
-
-                ３－３－１－３．イイね情報一覧が存在するかチェックする
-                    ３－３－１－３－１．いいね情報が存在する場合、以下の処理を繰り返す
-                        ３－３－１－３－１－１．いいね情報をリストに格納する
-
-
-                ３－３－４．取得したデータを各オブジェクトにセットする
-
-                ３－３－５．取得したユーザIDとログインユーザIDを比較する。
-                    ３－３－５－１．一致した場合、フォローボタンを非表示にする。
-
-                    ３－３－５－２．一致しなかった場合、followButtonを表示する。
-                        ３－３－５－２－１．ユーザーフォローフラグをチェックする
-                            ３－３－５－２－１．フォロー済みの場合、followButtonのテキストを「フォロー解除」に変更する。
-
-                            ３－３－５－２－２．未フォローの場合、followButtonのテキストを「フォローする」に変更する。
-
-                ３－３－６．選択されたラジオボタンにあったリストをuserRecycleにセットする
-                    ３－３－６－１．whisperRadioが選択されている場合、ささやき情報リストをセットする
-
-                    ３－３－６－２．goodInfoRadioが選択されている場合、いいね情報リストをセットする
-
-            ３－４．リクエストが失敗した時(コールバック処理)
-                ３－４－１．エラーメッセージをトースト表示する
-
-          4. フォロー管理処理API　共通実行メソッド
-            引数　　　followUserId	String
-            　　　　　followFlg		Boolean
-            戻り値   なし
-
-
-            ４－１．グローバル変数のログインユーザーIDを取得。
-
-            ４－２．フォロー管理処理APIをリクエストして対象ユーザのフォロー登録または解除を行う
-                ４－２－１．正常にレスポンスを受け取った時(コールバック処理)
-                    ４－２－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
-
-                ４－２－２．リクエストが失敗した時(コールバック処理)
-                    ４－２－２－１．エラーメッセージをトースト表示する
- */

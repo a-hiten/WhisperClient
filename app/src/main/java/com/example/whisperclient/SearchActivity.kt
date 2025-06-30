@@ -144,7 +144,7 @@ class SearchActivity : OverflowMenuActivity() {
                                     userId = goodJson.optString("userId"),
                                     userName = goodJson.optString("userName"),
                                     whisper = goodJson.optString("content"),
-                                    gcnt = goodJson.optInt("gcnt"),
+                                    gcnt = goodJson.optInt("goodCount"),
                                     userImage = goodJson.optString("userImage")
                                 )
                                 goods.add(good)

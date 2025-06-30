@@ -10,7 +10,7 @@ class MyApplication : Application() {
 
     // ３．グローバル変数apiUrlを文字列型で宣言して、各チームのAPIのホームディレクトリで初期化する
 //    val apiUrl: String = "http://10.0.2.2/TestAPI/test_php/"
-//    val apiUrl: String = "http://click.ecc.ac.jp/ecc/whisperSystem/"
+//    val apiUrl: String = "https://click.ecc.ac.jp/ecc/whisper25_a/"
     val apiUrl: String= "https://click.ecc.ac.jp/ecc/k_hosoi/WhisperSystem/"
 
 

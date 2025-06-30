@@ -57,7 +57,7 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
     // ３－４．ビューホルダーバインド時（onBindViewHolder処理）
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         //イイねの画像のやつ
-        holder.goodImage.setImageResource(R.drawable.star_on)
+//        holder.goodImage.setImageResource(R.drawable.star_on)
 
         // datasetから現在の行のデータを取得する
         val item = dataset[position]
@@ -104,9 +104,9 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
         // ３－４－４．goodImageのクリックイベントリスナーを生成する
         holder.goodImage.setOnClickListener {
 
-            // ３－４－２．イイねフラグに併せて、いいね画像を切り替える。
+//            // ３－４－２．イイねフラグに併せて、いいね画像を切り替える。
 //            item.goodImage = !item.goodImage
-
+//
 //            holder.goodImage.setImageResource(
 //                if (item.goodImage) R.drawable.star_on else R.drawable.star_off
 //            )
@@ -120,6 +120,7 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
 //            }
 //
 //            Toast.makeText(context, "イイねの画像をクリックしました！！！", Toast.LENGTH_SHORT).show()
+//
 
 
             // ３－４－４－１．イイね管理処理APIをリクエストして入力した対象行のささやきのイイねの登録・解除を行う
@@ -131,7 +132,7 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
             val requestBodyJson = JSONObject().apply {
                 put("userId", MyApplication.getInstance().loginUserId)
                 put("whisperNo", item.whisperId)
-                put("goodFlg", if (item.goodImage) 1 else 0)
+                put("goodFlg", if (item.goodImage) false else true)
             }
             Log.d("ぱらめーたのなまえかくにん", requestBodyJson.toString())
 
@@ -151,8 +152,6 @@ class WhisperAdapter(private val dataset: MutableList<WhisperRowData>,private va
                         val json = JSONObject(bodyStr)
                         val status = json.optString("status", json.optString("result", "error"))
 
-                        Log.d("Request JSON", requestBodyJson.toString()) // パラメータ確認
-                        Log.d("API Response", bodyStr)                    // サーバーの返答確認
 
                         // ３－４－４－１－１－１．JSONデータがエラーの場合、受け取ったエラーメッセージをトースト表示して処理を終了させる
                         if (status != "success") {

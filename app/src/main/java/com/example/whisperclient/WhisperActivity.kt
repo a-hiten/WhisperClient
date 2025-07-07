@@ -47,9 +47,6 @@ class WhisperActivity : OverflowMenuActivity() {
         val cancelButton = findViewById<Button>(R.id.cancelButton)      // キャンセルボタン
 
         // ２－２．グローバル変数のログインユーザーIDを取得。
-//        val loginUserId = MyApplication.getInstance().loginUserId
-//        Log.d("チェック", loginUserId)
-
         val loginUserId = MyApplication.getInstance().loginUserId ?: "null or empty"
         Log.d("チェック", "loginUserId = [$loginUserId]")
 
@@ -69,9 +66,6 @@ class WhisperActivity : OverflowMenuActivity() {
                 ).show()
                 return@setOnClickListener
             }
-
-//            println("めっせーじ" + whisperEdit)
-//            Log.d("チェック", "送信先URL = ${MyApplication.getInstance().apiUrl + "whisperInsertAPI.php"}")
 
             // ２－３－２．ささやき登録処理APIをリクエストして、入力したささやきの登録処理を行う
             // HTTP接続用インスタンス生成

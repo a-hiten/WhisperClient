@@ -60,7 +60,7 @@ class CreateUserActivity : AppCompatActivity() {
                 ).show()
                 return@setOnClickListener
             }
-            // 入力されていない項目がある場合　＊仕様書には書いていない処理です。
+            // 入力されていない項目がある場合
             if (userName.isBlank() || userId.isBlank() || password.isBlank() || repassword.isBlank()) {
                 // メッセージ内容：入力されていない項目があります。
                 Toast.makeText(
@@ -72,7 +72,7 @@ class CreateUserActivity : AppCompatActivity() {
             }
             // １－２－２．パスワードと確認パスワードの内容が違う時、エラーメッセージをトースト表示して処理を終了させる
             if (password != repassword) {
-                // メッセージ内容：「パスワードが一致しません」
+                // メッセージ内容：パスワードが一致しません
                 Toast.makeText(
                     applicationContext,
                     "パスワードが一致しません。",
